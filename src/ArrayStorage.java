@@ -38,7 +38,7 @@ public class ArrayStorage {
         if (get(uuid) != null) {
             int index = getIndex(uuid);
             storage[index] = null;
-            System.arraycopy(storage, index + 1, storage, index, countResumes--);
+            System.arraycopy(storage, index + 1, storage, index, --countResumes - index);
         }
     }
 

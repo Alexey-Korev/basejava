@@ -1,21 +1,19 @@
 import java.util.Arrays;
 
-import static java.util.Arrays.copyOfRange;
-
 /**
  * Array based storage for Resumes
  */
 public class ArrayStorage {
     Resume[] storage = new Resume[10000];
-    private int lastResumeIndex = 0;
+    private int countResumes = 0;
 
     void clear() {
-        Arrays.fill(storage, 0, lastResumeIndex, null);
-        lastResumeIndex = 0;
+        Arrays.fill(storage, 0, countResumes, null);
+        countResumes = 0;
     }
 
     void save(Resume resume) {
-        if (lastResumeIndex == storage.length) {
+        if (countResumes >= storage.length) {
             System.out.println("Storage is full");
             return;
         }
@@ -23,8 +21,7 @@ public class ArrayStorage {
         if (index > -1) {
             System.out.println("Resume " + resume + " is already in the storage");
         } else {
-            storage[lastResumeIndex] = resume;
-            lastResumeIndex++;
+            storage[countResumes++] = resume;
         }
     }
 
@@ -38,25 +35,26 @@ public class ArrayStorage {
     }
 
     void delete(String uuid) {
-        int index = getIndex(uuid);
-        storage[getIndex(uuid)] = null;
-        System.arraycopy(storage, index + 1, storage, index, size());
-        lastResumeIndex--;
+        if (get(uuid) != null) {
+            int index = getIndex(uuid);
+            storage[index] = null;
+            System.arraycopy(storage, index + 1, storage, index, countResumes--);
+        }
     }
 
     /**
      * @return array, contains only Resumes in storage (without null)
      */
     Resume[] getAll() {
-        return copyOfRange(storage, 0, lastResumeIndex);
+        return Arrays.copyOf(storage,  countResumes);
     }
 
     int size() {
-        return lastResumeIndex;
+        return countResumes;
     }
 
     private int getIndex(String uuid) {
-        for (int i = 0; i < lastResumeIndex; i++) {
+        for (int i = 0; i < countResumes; i++) {
             if (storage[i].getUuid().equals(uuid)) {
                 return i;
             }

@@ -35,10 +35,12 @@ public class ArrayStorage {
     }
 
     void delete(String uuid) {
-        if (get(uuid) != null) {
-            int index = getIndex(uuid);
-            storage[index] = null;
-            System.arraycopy(storage, index + 1, storage, index, --countResumes - index);
+        int index = getIndex(uuid);
+        if (index > -1 && index <= countResumes) {
+                System.arraycopy(storage, index + 1, storage, index, --countResumes - index);
+            storage[countResumes] = null;
+        } else {
+            System.out.println("Resume " + uuid + " is not in the storage");
         }
     }
 

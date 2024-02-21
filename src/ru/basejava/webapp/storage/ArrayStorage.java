@@ -1,3 +1,7 @@
+package ru.basejava.webapp.storage;
+
+import ru.basejava.webapp.model.Resume;
+
 import java.util.Arrays;
 
 /**
@@ -7,37 +11,46 @@ public class ArrayStorage {
     Resume[] storage = new Resume[10000];
     private int countResumes = 0;
 
-    void clear() {
+    public void clear() {
         Arrays.fill(storage, 0, countResumes, null);
         countResumes = 0;
     }
 
-    void save(Resume resume) {
+    public void save(Resume resume) {
         if (countResumes >= storage.length) {
             System.out.println("Storage is full");
             return;
         }
         int index = getIndex(resume.getUuid());
-        if (index > -1) {
+        if (index > -1 && index <= countResumes) {
             System.out.println("Resume " + resume + " is already in the storage");
         } else {
             storage[countResumes++] = resume;
         }
     }
 
-    Resume get(String uuid) {
+    public void update(Resume resume) {
+        int index = getIndex(resume.getUuid());
+        if (index > -1 && index <= countResumes) {
+            storage[index] = resume;
+        } else {
+            System.out.println("Resume " + resume + " is not in the storage");
+        }
+    }
+
+    public Resume get(String uuid) {
         int index = getIndex(uuid);
-        if (index > -1) {
+        if (index > -1 && index <= countResumes) {
             return storage[index];
         }
         System.out.println("Resume " + uuid + " is not in the storage");
         return null;
     }
 
-    void delete(String uuid) {
+    public void delete(String uuid) {
         int index = getIndex(uuid);
         if (index > -1 && index <= countResumes) {
-                System.arraycopy(storage, index + 1, storage, index, --countResumes - index);
+            System.arraycopy(storage, index + 1, storage, index, --countResumes - index);
             storage[countResumes] = null;
         } else {
             System.out.println("Resume " + uuid + " is not in the storage");
@@ -47,11 +60,11 @@ public class ArrayStorage {
     /**
      * @return array, contains only Resumes in storage (without null)
      */
-    Resume[] getAll() {
+    public Resume[] getAll() {
         return Arrays.copyOf(storage,  countResumes);
     }
 
-    int size() {
+    public int size() {
         return countResumes;
     }
 

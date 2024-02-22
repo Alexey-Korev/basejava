@@ -8,7 +8,8 @@ import java.util.Arrays;
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    Resume[] storage = new Resume[10000];
+    private final int STORAGE_LIMIT = 10000;
+    Resume[] storage = new Resume[STORAGE_LIMIT];
     private int countResumes = 0;
 
     public void clear() {
@@ -17,21 +18,18 @@ public class ArrayStorage {
     }
 
     public void save(Resume resume) {
-        if (countResumes >= storage.length) {
-            System.out.println("Storage is full");
-            return;
-        }
         int index = getIndex(resume.getUuid());
-        if (index > -1 && index <= countResumes) {
+        if (countResumes >= STORAGE_LIMIT) {
+            System.out.println("Storage is full");
+        } else if (index > -1 && index <= countResumes) {
             System.out.println("Resume " + resume + " is already in the storage");
         } else {
             storage[countResumes++] = resume;
         }
     }
-
     public void update(Resume resume) {
         int index = getIndex(resume.getUuid());
-        if (index > -1 && index <= countResumes) {
+        if (index > -1) {
             storage[index] = resume;
         } else {
             System.out.println("Resume " + resume + " is not in the storage");
@@ -40,7 +38,7 @@ public class ArrayStorage {
 
     public Resume get(String uuid) {
         int index = getIndex(uuid);
-        if (index > -1 && index <= countResumes) {
+        if (index > -1) {
             return storage[index];
         }
         System.out.println("Resume " + uuid + " is not in the storage");
@@ -49,8 +47,8 @@ public class ArrayStorage {
 
     public void delete(String uuid) {
         int index = getIndex(uuid);
-        if (index > -1 && index <= countResumes) {
-            System.arraycopy(storage, index + 1, storage, index, --countResumes - index);
+        if (index > -1) {
+            storage[index] = storage[--countResumes];
             storage[countResumes] = null;
         } else {
             System.out.println("Resume " + uuid + " is not in the storage");

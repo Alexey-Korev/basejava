@@ -2,17 +2,11 @@ package ru.basejava.webapp.storage;
 
 import ru.basejava.webapp.model.Resume;
 
-import java.util.Arrays;
-
 /**
  * Array based storage for Resumes
  */
 public class ArrayStorage extends AbstractArrayStorage {
 
-    public void clear() {
-        Arrays.fill(storage, 0, countResumes, null);
-        countResumes = 0;
-    }
 
     public void save(Resume resume) {
         int index = getIndex(resume.getUuid());
@@ -22,14 +16,6 @@ public class ArrayStorage extends AbstractArrayStorage {
             System.out.println("Resume " + resume + " is already in the storage");
         } else {
             storage[countResumes++] = resume;
-        }
-    }
-    public void update(Resume resume) {
-        int index = getIndex(resume.getUuid());
-        if (index > -1) {
-            storage[index] = resume;
-        } else {
-            System.out.println("Resume " + resume + " is not in the storage");
         }
     }
 
@@ -46,9 +32,6 @@ public class ArrayStorage extends AbstractArrayStorage {
     /**
      * @return array, contains only Resumes in storage (without null)
      */
-    public Resume[] getAll() {
-        return Arrays.copyOf(storage,  countResumes);
-    }
 
     protected int getIndex(String uuid) {
         for (int i = 0; i < countResumes; i++) {

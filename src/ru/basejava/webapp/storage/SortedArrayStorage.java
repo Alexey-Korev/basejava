@@ -4,30 +4,32 @@ import ru.basejava.webapp.model.Resume;
 
 import java.util.Arrays;
 
-public class SortedArrayStorage extends AbstractArrayStorage{
-    @Override
-    public void clear() {
-
-    }
+public class SortedArrayStorage extends AbstractArrayStorage {
 
     @Override
-    public void update(Resume r) {
-
-    }
-
-    @Override
-    public void save(Resume r) {
-
+    public void save(Resume resume) {
+        int index = getIndex(resume.getUuid());
+        if (countResumes >= STORAGE_LIMIT) {
+            System.out.println("Storage is full");
+        } else if (index > -1 && index <= countResumes) {
+            System.out.println("Resume " + resume + " is already in the storage");
+        } else {
+            index = -index - 1;
+            System.arraycopy(storage, index, storage, index + 1, countResumes - index);
+            storage[index] = resume;
+            countResumes++;
+        }
     }
 
     @Override
     public void delete(String uuid) {
-
-    }
-
-    @Override
-    public Resume[] getAll() {
-        return new Resume[0];
+        int index = getIndex(uuid);
+        if (index > -1) {
+            System.arraycopy(storage, index + 1, storage, index, countResumes - index);
+            countResumes--;
+        } else {
+            System.out.println("Resume " + uuid + " is not in the storage");
+        }
     }
 
     @Override

@@ -1,5 +1,8 @@
 package ru.basejava.webapp.storage;
 
+import ru.basejava.webapp.exception.ExistStorageException;
+import ru.basejava.webapp.exception.NotExistStorageException;
+import ru.basejava.webapp.exception.StorageException;
 import ru.basejava.webapp.model.Resume;
 
 import java.util.Arrays;
@@ -17,19 +20,19 @@ public abstract class AbstractArrayStorage implements Storage {
 
     public void update(Resume resume) {
         int index = getIndex(resume.getUuid());
-        if (index > -1) {
-            storage[index] = resume;
+        if (index <0) {
+            throw new NotExistStorageException(resume.getUuid());
         } else {
-            System.out.println("Resume " + resume + " is not in the storage");
+            storage[index] = resume;
         }
     }
 
     public void save(Resume resume) {
         int index = getIndex(resume.getUuid());
-        if (countResumes >= STORAGE_LIMIT) {
-            System.out.println("Storage is full");
-        } else if (index > -1 && index <= countResumes) {
-            System.out.println("Resume " + resume + " is already in the storage");
+        if (index >=0 ) {
+            throw new ExistStorageException(resume.getUuid());
+        } else if (countResumes >= STORAGE_LIMIT) {
+            throw new StorageException("Storage is full", resume.getUuid());
         } else {
             insertToArray(resume, index);
             countResumes++;
@@ -38,20 +41,19 @@ public abstract class AbstractArrayStorage implements Storage {
 
     public Resume get(String uuid) {
         int index = getIndex(uuid);
-        if (index == -1) {
-            System.out.println("Resume " + uuid + " is not in the storage");
-            return null;
+        if (index < 0) {
+            throw new NotExistStorageException(uuid);
         }
         return storage[index];
     }
 
     public void delete(String uuid) {
         int index = getIndex(uuid);
-        if (index > -1) {
+        if (index < 0) {
+            throw new NotExistStorageException(uuid);
+        } else {
             removeFromArray(index);
             countResumes--;
-        } else {
-            System.out.println("Resume " + uuid + " is not in the storage");
         }
     }
 

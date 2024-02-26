@@ -18,12 +18,10 @@ public class SortedArrayStorage extends AbstractArrayStorage {
         index = -index-1;
         System.arraycopy(storage, index, storage, index + 1, countResumes - index);
         storage[index] = resume;
-        countResumes++;
     }
 
     @Override
     protected void removeFromArray(int index) {
         System.arraycopy(storage, index + 1, storage, index, countResumes - index);
-        countResumes--;
     }
 }

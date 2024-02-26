@@ -32,6 +32,7 @@ public abstract class AbstractArrayStorage implements Storage {
             System.out.println("Resume " + resume + " is already in the storage");
         } else {
             insertToArray(resume, index);
+            countResumes++;
         }
     }
 
@@ -48,6 +49,7 @@ public abstract class AbstractArrayStorage implements Storage {
         int index = getIndex(uuid);
         if (index > -1) {
             removeFromArray(index);
+            countResumes--;
         } else {
             System.out.println("Resume " + uuid + " is not in the storage");
         }

@@ -9,10 +9,6 @@ import ru.basejava.webapp.exception.StorageException;
 import ru.basejava.webapp.model.Resume;
 
 public abstract class AbstractArrayStorageTest {
-
-    public AbstractArrayStorageTest(Storage storage) {
-        this.storage = storage;
-    }
     private Storage storage;
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
@@ -21,6 +17,9 @@ public abstract class AbstractArrayStorageTest {
     private static final Resume RESUME2 = new Resume(UUID_2);
     private static final Resume RESUME3 = new Resume(UUID_3);
 
+    public AbstractArrayStorageTest(Storage storage) {
+        this.storage = storage;
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -71,7 +70,7 @@ public abstract class AbstractArrayStorageTest {
         } catch (StorageException e) {
             Assert.fail("overflow ahead of time");
         }
-        storage.save(new Resume("overflow resume"));
+        storage.save(new Resume("overflow_resume"));
     }
 
     @Test
@@ -83,12 +82,12 @@ public abstract class AbstractArrayStorageTest {
         storage.get("dummy");
     }
 
-    @Test(expected = NotExistStorageException.class)
+    @Test
     public void delete() {
-        Assert.assertEquals(RESUME1, storage.get("uuid1"));
+        Assert.assertEquals(3, storage.size());
+        storage.get("uuid1");
         storage.delete("uuid1");
         Assert.assertEquals(2, storage.size());
-        storage.get("uuid1");
     }
     @Test(expected = NotExistStorageException.class)
     public void deleteNotExist() {

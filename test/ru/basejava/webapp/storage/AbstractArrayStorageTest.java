@@ -9,7 +9,7 @@ import ru.basejava.webapp.exception.StorageException;
 import ru.basejava.webapp.model.Resume;
 
 public abstract class AbstractArrayStorageTest {
-    private Storage storage;
+    private final Storage storage;
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
     private static final String UUID_3 = "uuid3";
@@ -22,7 +22,7 @@ public abstract class AbstractArrayStorageTest {
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         storage.clear();
         storage.save(RESUME1);
         storage.save(RESUME2);
@@ -61,7 +61,7 @@ public abstract class AbstractArrayStorageTest {
     }
 
     @Test(expected = StorageException.class)
-    public void saveOverFlow() throws Exception {
+    public void saveOverFlow() {
         storage.clear();
         try {
             while (storage.size() != AbstractArrayStorage.STORAGE_LIMIT){
@@ -75,10 +75,10 @@ public abstract class AbstractArrayStorageTest {
 
     @Test
     public void get() {
-        Assert.assertTrue(storage.get("uuid1").equals(RESUME1));
+        Assert.assertEquals(storage.get("uuid1"), RESUME1);
     }
     @Test(expected = NotExistStorageException.class)
-    public void getNotExist() throws Exception {
+    public void getNotExist() {
         storage.get("dummy");
     }
 

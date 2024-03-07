@@ -1,18 +1,19 @@
 package ru.basejava;
 
 import ru.basejava.webapp.model.Resume;
-import ru.basejava.webapp.storage.SortedArrayStorage;
+import ru.basejava.webapp.storage.ListStorage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 /**
  * Interactive test for ru.basejava.webapp.storage.ArrayStorage implementation
  * (just run, no need to understand)
  */
 public class MainArray {
-    private final static SortedArrayStorage ARRAY_STORAGE = new SortedArrayStorage();
+    private final static ListStorage ARRAY_STORAGE = new ListStorage(new ArrayList<>());
 
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));

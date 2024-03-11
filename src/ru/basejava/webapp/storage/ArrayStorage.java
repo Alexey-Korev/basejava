@@ -7,7 +7,7 @@ import ru.basejava.webapp.model.Resume;
  */
 public class ArrayStorage extends AbstractArrayStorage {
 
-    protected int getIndex(String uuid) {
+    protected Object getSearchKey(String uuid) {
         for (int i = 0; i < countResumes; i++) {
             if (storage[i].getUuid().equals(uuid)) {
                 return i;
@@ -23,6 +23,6 @@ public class ArrayStorage extends AbstractArrayStorage {
 
     @Override
     protected void removeFromArray(int index) {
-        storage[index] = storage[countResumes-1];
+        storage[(Integer) index] = storage[countResumes-1];
     }
 }

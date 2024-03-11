@@ -1,19 +1,19 @@
 package ru.basejava;
 
 import ru.basejava.webapp.model.Resume;
-import ru.basejava.webapp.storage.ListStorage;
+import ru.basejava.webapp.storage.MapStorage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Interactive test for ru.basejava.webapp.storage.ArrayStorage implementation
  * (just run, no need to understand)
  */
 public class MainArray {
-    private final static ListStorage ARRAY_STORAGE = new ListStorage(new ArrayList<>());
+    private final static MapStorage ARRAY_STORAGE = new MapStorage(new HashMap<>());
 
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));

@@ -1,19 +1,20 @@
 package ru.basejava;
 
 import ru.basejava.webapp.model.Resume;
-import ru.basejava.webapp.storage.MapStorage;
+import ru.basejava.webapp.storage.MapResumeStorage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Interactive test for ru.basejava.webapp.storage.ArrayStorage implementation
  * (just run, no need to understand)
  */
 public class MainArray {
-    private final static MapStorage ARRAY_STORAGE = new MapStorage(new HashMap<>());
+    private final static MapResumeStorage ARRAY_STORAGE = new MapResumeStorage(new HashMap<>());
 
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -37,12 +38,12 @@ public class MainArray {
                     System.out.println(ARRAY_STORAGE.size());
                     break;
                 case "save":
-                    r = new Resume(uuid);
+                    r = new Resume(uuid, "name_" + uuid);
                     ARRAY_STORAGE.save(r);
                     printAll();
                     break;
                 case "update":
-                    r = new Resume(uuid);
+                    r = new Resume(uuid, uuid);
                     ARRAY_STORAGE.update(r);
                     printAll();
                     break;
@@ -67,9 +68,9 @@ public class MainArray {
     }
 
     static void printAll() {
-        Resume[] all = ARRAY_STORAGE.getAll();
+        List<Resume> all = ARRAY_STORAGE.getAllSorted();
         System.out.println("----------------------------");
-        if (all.length == 0) {
+        if (all.size() == 0) {
             System.out.println("Empty");
         } else {
             for (Resume r : all) {

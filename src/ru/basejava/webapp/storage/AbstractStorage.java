@@ -4,11 +4,13 @@ import ru.basejava.webapp.exception.ExistStorageException;
 import ru.basejava.webapp.exception.NotExistStorageException;
 import ru.basejava.webapp.model.Resume;
 
+import java.util.Comparator;
+import java.util.List;
+
 public abstract class AbstractStorage implements Storage {
+    private static final Comparator<Resume> RESUME_COMPARATOR = Comparator.comparing(Resume::getFullName).thenComparing(Resume::getUuid);
 
     public abstract void clear();
-
-    public abstract Resume[] getAll();
 
     public abstract int size();
 
@@ -24,6 +26,8 @@ public abstract class AbstractStorage implements Storage {
 
     protected abstract boolean isExist(Object searchKey);
 
+    protected abstract List<Resume> makeList();
+
     public void update(Resume resume) {
         Object searchKey = getSearchKey(resume.getUuid());
         doUpdate(resume, getExistingSearchKey(searchKey, resume.getUuid()));
@@ -35,16 +39,21 @@ public abstract class AbstractStorage implements Storage {
         doSave(resume, getNotExistingSearchKey(searchKey, resume.getUuid()));
     }
 
-    public Resume get(String uuid) {
-        Object searchKey = getSearchKey(uuid);
-        return doGet(getExistingSearchKey(searchKey, uuid));
+    public Resume get(String key) {
+        Object searchKey = getSearchKey(key);
+        return doGet(getExistingSearchKey(searchKey, key));
     }
 
-    public void delete(String uuid) {
-        Object searchKey = getSearchKey(uuid);
-        doDelete(getExistingSearchKey(searchKey, uuid));
+    public void delete(String key) {
+        Object searchKey = getSearchKey(key);
+        doDelete(getExistingSearchKey(searchKey, key));
     }
 
+    public List<Resume> getAllSorted() {
+        List<Resume> list = makeList();
+        list.sort(RESUME_COMPARATOR);
+        return list;
+    }
     private Object getExistingSearchKey(Object searchKey, String uuid) {
         if (!isExist(searchKey)) {
             throw new NotExistStorageException(uuid);

@@ -3,15 +3,15 @@ package ru.basejava.webapp.storage;
 import ru.basejava.webapp.model.Resume;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class MapUuidStorage extends AbstractStorage {
 
-    private final Map<String, Resume> storage;
+    private final Map<String, Resume> storage = new HashMap<>();
 
-    public MapUuidStorage(Map<String, Resume> storage) {
-        this.storage = storage;
+    public MapUuidStorage() {
     }
 
     @Override
@@ -20,7 +20,7 @@ public class MapUuidStorage extends AbstractStorage {
     }
 
     @Override
-    public List<Resume> makeList() {
+    public List<Resume> doGetAll() {
         return new ArrayList<>(storage.values());
     }
 

@@ -6,7 +6,6 @@ import ru.basejava.webapp.storage.MapResumeStorage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -14,7 +13,7 @@ import java.util.List;
  * (just run, no need to understand)
  */
 public class MainArray {
-    private final static MapResumeStorage ARRAY_STORAGE = new MapResumeStorage(new HashMap<>());
+    private final static MapResumeStorage ARRAY_STORAGE = new MapResumeStorage();
 
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));

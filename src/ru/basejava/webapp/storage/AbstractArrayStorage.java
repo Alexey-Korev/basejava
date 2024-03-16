@@ -17,7 +17,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         countResumes = 0;
     }
 
-    public List<Resume> makeList() {
+    public List<Resume> doGetAll() {
         return Arrays.asList(Arrays.copyOf(storage, countResumes));
     }
 

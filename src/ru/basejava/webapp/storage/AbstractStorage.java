@@ -26,7 +26,7 @@ public abstract class AbstractStorage implements Storage {
 
     protected abstract boolean isExist(Object searchKey);
 
-    protected abstract List<Resume> makeList();
+    protected abstract List<Resume> doGetAll();
 
     public void update(Resume resume) {
         Object searchKey = getSearchKey(resume.getUuid());
@@ -50,7 +50,7 @@ public abstract class AbstractStorage implements Storage {
     }
 
     public List<Resume> getAllSorted() {
-        List<Resume> list = makeList();
+        List<Resume> list = doGetAll();
         list.sort(RESUME_COMPARATOR);
         return list;
     }

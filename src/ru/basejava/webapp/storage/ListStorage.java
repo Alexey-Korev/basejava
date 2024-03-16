@@ -18,7 +18,7 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public List<Resume> makeList() {
+    public List<Resume> doGetAll() {
         return storage;
     }
 

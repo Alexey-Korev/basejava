@@ -6,9 +6,10 @@ import ru.basejava.webapp.model.Resume;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 public abstract class AbstractStorage<SK> implements Storage {
-//    private static final Comparator<Resume> RESUME_COMPARATOR = Comparator.comparing(Resume::getFullName).thenComparing(Resume::getUuid);
+    private static Logger LOG = Logger.getLogger(AbstractStorage.class.getName());
 
     public abstract void clear();
 
@@ -29,33 +30,39 @@ public abstract class AbstractStorage<SK> implements Storage {
     protected abstract List<Resume> doGetAll();
 
     public void update(Resume resume) {
+        LOG.info("Update " + resume);
         SK searchKey = getSearchKey(resume.getUuid());
         doUpdate(resume, getExistingSearchKey(searchKey, resume.getUuid()));
     }
 
 
     public void save(Resume resume) {
+        LOG.info("Save " + resume);
         SK searchKey = getSearchKey(resume.getUuid());
         doSave(resume, getNotExistingSearchKey(searchKey, resume.getUuid()));
     }
 
     public Resume get(String key) {
+        LOG.info("Get " + key);
         SK searchKey = getSearchKey(key);
         return doGet(getExistingSearchKey(searchKey, key));
     }
 
     public void delete(String key) {
+        LOG.info("Delete " + key);
         SK searchKey = getSearchKey(key);
         doDelete(getExistingSearchKey(searchKey, key));
     }
 
     public List<Resume> getAllSorted() {
+        LOG.info("getAllSorted");
         List<Resume> list = doGetAll();
         Collections.sort(list);
         return list;
     }
     private SK getExistingSearchKey(SK searchKey, String uuid) {
         if (!isExist(searchKey)) {
+            LOG.warning("Resume " + uuid + " is not in the storage");
             throw new NotExistStorageException(uuid);
         } else {
             return searchKey;
@@ -65,6 +72,7 @@ public abstract class AbstractStorage<SK> implements Storage {
 
     private SK getNotExistingSearchKey(SK searchKey, String uuid) {
         if (isExist(searchKey)) {
+            LOG.warning("Resume " + uuid + " is already in the storage");
             throw new ExistStorageException(uuid);
         } else {
             return searchKey;

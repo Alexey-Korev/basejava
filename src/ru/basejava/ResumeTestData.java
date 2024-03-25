@@ -10,8 +10,40 @@ import java.util.Map;
 
 public class ResumeTestData {
     public static void main(String[] args) {
-        Resume resume = new Resume("fsdf314", "Alex Korev");
+        Resume resume = resumeCreate("fsdf314", "Alex Korev");
 
+
+        for (Map.Entry<ContactType, String> entry : resume.getContacts().entrySet()) {
+            System.out.println("\n" + entry.getKey() + " : " + entry.getValue());
+        }
+
+        for (Map.Entry<SectionType, AbstractSection> entry : resume.getSections().entrySet()) {
+            if (entry.getKey() == SectionType.PERSONAL || entry.getKey() == SectionType.OBJECTIVE) {
+                System.out.println(entry.getKey() + " : " + ((StringSection) entry.getValue()).getText());
+            }
+            if (entry.getKey() == SectionType.QUALIFICATIONS || entry.getKey() == SectionType.ACHIEVEMENT) {
+                System.out.println("\n" + entry.getKey());
+                AbstractSection section = entry.getValue();
+                for (String str : ((ListSection) section).getText()) {
+                    System.out.println(str);
+                }
+            }
+            if (entry.getKey() == SectionType.EXPERIENCE || entry.getKey() == SectionType.EDUCATION) {
+                System.out.println("\n" + entry.getKey() + "\n");
+                AbstractSection section = entry.getValue();
+                for (Company company : ((CompanySection) section).getCompanies()) {
+                    System.out.println(company.getTitle() + " " + company.getTitle() + " " +
+                            company.getWebsite() + " " +
+                            company.getPeriod());
+                }
+
+            }
+        }
+
+    }
+
+    public static Resume resumeCreate(String uuid, String fullname){
+        Resume resume =  new Resume(uuid, fullname);
         //resume contacts
         resume.getContacts().put(ContactType.NUMBER, "+7(921) 855-0482");
         resume.getContacts().put(ContactType.SKYPE, "skype:grigory.kislin");
@@ -84,34 +116,6 @@ public class ResumeTestData {
         companies.add(luxoftComp);
         AbstractSection institutionSection = new CompanySection(companies);
         resume.getSections().put(SectionType.EDUCATION, institutionSection);
-
-
-        for (Map.Entry<ContactType, String> entry : resume.getContacts().entrySet()) {
-            System.out.println("\n" + entry.getKey() + " : " + entry.getValue());
-        }
-
-        for (Map.Entry<SectionType, AbstractSection> entry : resume.getSections().entrySet()) {
-            if (entry.getKey() == SectionType.PERSONAL || entry.getKey() == SectionType.OBJECTIVE) {
-                System.out.println(entry.getKey() + " : " + ((StringSection) entry.getValue()).getText());
-            }
-            if (entry.getKey() == SectionType.QUALIFICATIONS || entry.getKey() == SectionType.ACHIEVEMENT) {
-                System.out.println("\n" + entry.getKey());
-                AbstractSection section = entry.getValue();
-                for (String str : ((ListSection) section).getText()) {
-                    System.out.println(str);
-                }
-            }
-            if (entry.getKey() == SectionType.EXPERIENCE || entry.getKey() == SectionType.EDUCATION) {
-                System.out.println("\n" + entry.getKey() + "\n");
-                AbstractSection section = entry.getValue();
-                for (Company company : ((CompanySection) section).getCompanies()) {
-                    System.out.println(company.getTitle() + " " + company.getTitle() + " " +
-                            company.getWebsite() + " " +
-                            company.getPeriod());
-                }
-
-            }
-        }
-
+        return resume;
     }
 }

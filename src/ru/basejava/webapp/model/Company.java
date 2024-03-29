@@ -1,18 +1,20 @@
 package ru.basejava.webapp.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class Company {
     private final String title;
     private final String website;
-    private final List<Period> period;
+    private final List<Period> period = new ArrayList<>();
 
-    public Company(String title, String website, List<Period> period) {
+    public Company(String title, String website, Period... period) {
         Objects.requireNonNull(title, "title can't be null");
         this.title = title;
         this.website = website;
-        this.period = period;
+        Arrays.asList(period);
     }
 
     public String getTitle() {

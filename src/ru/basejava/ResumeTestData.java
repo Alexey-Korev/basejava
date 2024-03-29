@@ -4,7 +4,6 @@ import ru.basejava.webapp.model.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -91,8 +90,8 @@ public class ResumeTestData {
         Period wrikePeriod = new Period("Wrike",
                 "Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO.",
                 LocalDate.parse("2014-10-01"), LocalDate.parse("2016-01-01"));
-        Company javaOps = new Company("java Online ProjectsPeriod", "https://javaops.ru/", Arrays.asList(javaOnlineProjectsPeriod));
-        Company wrike = new Company("Wrike", "https://www.wrike.com/", Arrays.asList(wrikePeriod));
+        Company javaOps = new Company("java Online ProjectsPeriod", "https://javaops.ru/", javaOnlineProjectsPeriod);
+        Company wrike = new Company("Wrike", "https://www.wrike.com/", wrikePeriod);
 
         List<Company> companies = new ArrayList<>();
         companies.add(javaOps);
@@ -108,9 +107,9 @@ public class ResumeTestData {
                 "Курс 'Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.'",
                 LocalDate.parse("2011-03-01"), LocalDate.parse("2011-04-01"));
         Company courseraComp = new Company("jCoursera", "https://www.coursera.org/learn/scala-functional-programming",
-                Arrays.asList(coursera));
+                coursera);
         Company luxoftComp = new Company("Luxoft", "http://www.luxoft-training.ru/training/catalog/course.html?ID=22366",
-                Arrays.asList(luxoft));
+                luxoft);
 
         companies.add(courseraComp);
         companies.add(luxoftComp);

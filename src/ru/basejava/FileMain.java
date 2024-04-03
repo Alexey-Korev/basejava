@@ -23,16 +23,31 @@ public class FileMain {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        fileMain.recursiveTraversal(dir);
+        fileMain.recursiveTraversal(dir, 1);
     }
 
-    public void recursiveTraversal(File file) {
-        if (file.isDirectory()) {
-            for (File subFile : file.listFiles()) {
-                recursiveTraversal(subFile);
+
+    public static void recursiveTraversal(File dir, int indent) {
+        File[] files = dir.listFiles();
+
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile()) {
+                    printIndent(indent);
+                    System.out.println("File: " + file.getName());
+                } else if (file.isDirectory()) {
+                    printIndent(indent);
+                    System.out.println("Directory: " + file.getName());
+                    recursiveTraversal(file, indent + 1);
+                }
             }
-        } else {
-            System.out.println(file.getParent() + " + " + file.getName());
+        }
+    }
+
+    private static void printIndent(int indent) {
+        for (int i = 0; i < indent; i++) {
+            System.out.print("    ");
         }
     }
 }
+

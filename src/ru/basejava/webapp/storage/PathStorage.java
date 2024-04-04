@@ -2,7 +2,7 @@ package ru.basejava.webapp.storage;
 
 import ru.basejava.webapp.exception.StorageException;
 import ru.basejava.webapp.model.Resume;
-import ru.basejava.webapp.storage.Serializers.SerializerStrategy;
+import ru.basejava.webapp.storage.serializers.SerializerStrategy;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

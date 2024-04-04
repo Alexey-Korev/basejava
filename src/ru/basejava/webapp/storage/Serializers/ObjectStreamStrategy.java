@@ -1,11 +1,11 @@
-package ru.basejava.webapp.storage;
+package ru.basejava.webapp.storage.Serializers;
 
 import ru.basejava.webapp.exception.StorageException;
 import ru.basejava.webapp.model.Resume;
 
 import java.io.*;
 
-public class ObjectStreamStrategy implements FileStrategy {
+public class ObjectStreamStrategy implements SerializerStrategy {
 
     @Override
     public void doWrite(Resume r, OutputStream os) throws IOException {

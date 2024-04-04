@@ -2,6 +2,7 @@ package ru.basejava.webapp.storage;
 
 import ru.basejava.webapp.exception.StorageException;
 import ru.basejava.webapp.model.Resume;
+import ru.basejava.webapp.storage.Serializers.SerializerStrategy;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -14,18 +15,18 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ObjectStreamPathStorage extends AbstractStorage<Path>{
+public class PathStorage extends AbstractStorage<Path>{
 
-    private Path directory;
-    private FileStrategy fileStrategy;
+    private final Path directory;
+    private final SerializerStrategy serializerStrategy;
 
-    protected ObjectStreamPathStorage(String dir, FileStrategy fileStrategy) {
+    protected PathStorage(String dir, SerializerStrategy serializerStrategy) {
         directory = Paths.get(dir);
         Objects.requireNonNull(directory, "directory must not be null");
         if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
             throw new IllegalArgumentException(dir + " is not directory or is not writable");
         }
-        this.fileStrategy = fileStrategy;
+        this.serializerStrategy = serializerStrategy;
     }
 
     @Override
@@ -50,7 +51,7 @@ public class ObjectStreamPathStorage extends AbstractStorage<Path>{
     @Override
     protected void doUpdate(Resume resume, Path path) {
         try {
-            fileStrategy.doWrite(resume, new BufferedOutputStream(Files.newOutputStream(path)));
+            serializerStrategy.doWrite(resume, new BufferedOutputStream(Files.newOutputStream(path)));
         } catch (IOException e) {
             throw new StorageException("Path write error", resume.getUuid(), e);
         }
@@ -74,7 +75,7 @@ public class ObjectStreamPathStorage extends AbstractStorage<Path>{
     @Override
     protected Resume doGet(Path path) {
         try {
-            return fileStrategy.doRead(new BufferedInputStream(Files.newInputStream(path)));
+            return serializerStrategy.doRead(new BufferedInputStream(Files.newInputStream(path)));
         } catch (IOException e) {
             throw new StorageException("Path read error", path.getFileName().toString(), e);
         }

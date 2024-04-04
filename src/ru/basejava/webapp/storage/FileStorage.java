@@ -2,18 +2,20 @@ package ru.basejava.webapp.storage;
 
 import ru.basejava.webapp.exception.StorageException;
 import ru.basejava.webapp.model.Resume;
+import ru.basejava.webapp.storage.Serializers.SerializerStrategy;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ObjectStreamFileStorage extends AbstractStorage<File> {
+public class FileStorage extends AbstractStorage<File> {
 
-    private File directory;
-    private FileStrategy fileStrategy;
+    private final File directory;
+    private final SerializerStrategy serializerStrategy;
 
-    protected ObjectStreamFileStorage(File directory, FileStrategy fileStrategy) {
+
+    protected FileStorage(File directory, SerializerStrategy serializerStrategy) {
         Objects.requireNonNull(directory, "directory must not be null");
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not directory");
@@ -22,26 +24,19 @@ public class ObjectStreamFileStorage extends AbstractStorage<File> {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not readable/writable");
         }
         this.directory = directory;
-        this.fileStrategy = fileStrategy;
+        this.serializerStrategy = serializerStrategy;
     }
 
     @Override
     public void clear() {
-        File[] files = directory.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                doDelete(file);
-            }
+        for (File file : getFileList(directory)) {
+            doDelete(file);
         }
     }
 
     @Override
     public int size() {
-        String[] list = directory.list();
-        if (list == null) {
-            throw new StorageException("Directory read error", directory.getName());
-        }
-        return list.length;
+        return getFileList(directory).length;
     }
 
     @Override
@@ -52,7 +47,7 @@ public class ObjectStreamFileStorage extends AbstractStorage<File> {
     @Override
     protected void doUpdate(Resume r, File file) {
         try {
-            fileStrategy.doWrite(r, new BufferedOutputStream(new FileOutputStream(file)));
+            serializerStrategy.doWrite(r, new BufferedOutputStream(new FileOutputStream(file)));
         } catch (IOException e) {
             throw new StorageException("File write error", r.getUuid(), e);
         }
@@ -77,7 +72,7 @@ public class ObjectStreamFileStorage extends AbstractStorage<File> {
     @Override
     protected Resume doGet(File file) {
         try {
-            return fileStrategy.doRead(new BufferedInputStream(new FileInputStream(file)));
+            return serializerStrategy.doRead(new BufferedInputStream(new FileInputStream(file)));
         } catch (IOException e) {
             throw new StorageException("File read error", file.getName(), e);
         }
@@ -93,14 +88,18 @@ public class ObjectStreamFileStorage extends AbstractStorage<File> {
     @Override
     protected List<Resume> doGetAll() {
         List<Resume> resumeList = new ArrayList<>();
-        File[] files = directory.listFiles();
-        if (files == null) {
-            throw new StorageException("Directory read error", null);
-        }
-        for (File file : files) {
+        for (File file : getFileList(directory)) {
             resumeList.add(doGet(file));
         }
         return resumeList;
+    }
+
+    protected File[] getFileList(File directory) {
+        File[] files = directory.listFiles();
+        if (files == null) {
+            throw new StorageException("Directory read error", directory.getName());
+        }
+        return files;
     }
 
 }

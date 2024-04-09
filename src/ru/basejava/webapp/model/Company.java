@@ -1,15 +1,18 @@
 package ru.basejava.webapp.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Company implements Serializable {
     private static final long serialVersionUID = 1L;
-    private final String title;
-    private final String website;
+    private String title;
+    private String website;
     private final List<Period> period = new ArrayList<>();
 
     public Company(String title, String website, Period... period) {
@@ -18,6 +21,9 @@ public class Company implements Serializable {
         this.website = website;
         Arrays.asList(period);
     }
+
+    public Company() {}
+
 
     public String getTitle() {
         return title;

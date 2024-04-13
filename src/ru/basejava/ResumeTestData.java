@@ -2,6 +2,9 @@ package ru.basejava;
 
 import ru.basejava.webapp.model.*;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class ResumeTestData {
@@ -49,7 +52,7 @@ public class ResumeTestData {
         resume.getContacts().put(ContactType.STACKOVERFLOW, "https://stackoverflow.com/users/548473/grigory-kislin");
 
         // resume string section
-       /* AbstractSection position = new StringSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям");
+        AbstractSection position = new StringSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям");
         AbstractSection personal = new StringSection("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры.");
         resume.getSections().put(SectionType.OBJECTIVE, position);
         resume.getSections().put(SectionType.PERSONAL, personal);
@@ -111,7 +114,7 @@ public class ResumeTestData {
         companies.add(courseraComp);
         companies.add(luxoftComp);
         AbstractSection institutionSection = new CompanySection(companies);
-        resume.getSections().put(SectionType.EDUCATION, institutionSection);*/
+        resume.getSections().put(SectionType.EDUCATION, institutionSection);
         return resume;
     }
 }

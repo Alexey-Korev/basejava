@@ -7,52 +7,38 @@ import java.time.LocalDate;
 import java.util.*;
 
 public class DataStreamSerializer implements SerializerStrategy {
-    @Override
     public void doWrite(Resume resume, OutputStream os) throws IOException {
         try (DataOutputStream dos = new DataOutputStream(os)) {
             dos.writeUTF(resume.getUuid());
             dos.writeUTF(resume.getFullName());
-            Map<ContactType, String> contacts = resume.getContacts();
-            dos.writeInt(contacts.size());
-            for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
+            writeWithException(dos, resume.getContacts().entrySet(), entry -> {
                 dos.writeUTF(entry.getKey().name());
                 dos.writeUTF(entry.getValue());
-            }
+            });
 
-            Map<SectionType, AbstractSection> sections = resume.getSections();
-            dos.writeInt(sections.size());
-            for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
+            writeWithException(dos, resume.getSections().entrySet(), entry -> {
                 SectionType sectionType = entry.getKey();
                 AbstractSection section = entry.getValue();
                 dos.writeUTF(sectionType.name());
                 switch (sectionType) {
                     case PERSONAL, OBJECTIVE -> dos.writeUTF(((StringSection) section).getText());
-                    case ACHIEVEMENT, QUALIFICATIONS -> {
-                        List<String> items = ((ListSection) section).getText();
-                        dos.writeInt(items.size());
-                        for (String item : items) {
-                            dos.writeUTF(item);
-                        }
-                    }
-                    case EXPERIENCE, EDUCATION -> {
-                        List<Company> companies = ((CompanySection) section).getCompanies();
-                        dos.writeInt(companies.size());
-                        for (Company company : companies) {
-                            dos.writeUTF(company.getTitle());
-                            dos.writeUTF(company.getWebsite());
-                            List<Period> periods = company.getPeriod();
-                            dos.writeInt(periods.size());
-                            for (Period period : periods) {
-                                dos.writeUTF(period.getStartDate().toString());
-                                dos.writeUTF(period.getEndDate().toString());
-                                dos.writeUTF(period.getTitle());
-                                dos.writeUTF(period.getDescription());
-                            }
-                        }
-                    }
+                    case ACHIEVEMENT, QUALIFICATIONS ->
+                            writeWithException(dos, ((ListSection) section).getText(), dos::writeUTF);
+                    case EXPERIENCE, EDUCATION ->
+                            writeWithException(dos, ((CompanySection) section).getCompanies(), organization -> {
+                                dos.writeUTF(organization.getTitle());
+                                dos.writeUTF(organization.getWebsite());
+                                writeWithException(dos, organization.getPeriod(), position -> {
+                                    dos.writeUTF(position.getStartDate().toString());
+                                    dos.writeUTF(position.getEndDate().toString());
+                                    dos.writeUTF(position.getTitle());
+                                    dos.writeUTF(position.getDescription());
+                                });
+                            });
                     default -> throw new IllegalStateException();
                 }
-            }
+            });
+
         }
     }
 
@@ -104,4 +90,29 @@ public class DataStreamSerializer implements SerializerStrategy {
             return resume;
         }
     }
+
+
+    private interface ConsumerWriter<T> {
+        void accept(T t) throws IOException;
+    }
+
+    private <T> void writeWithException(DataOutputStream dos, Collection<T> collection, ConsumerWriter<T> action) throws IOException {
+        dos.writeInt(collection.size());
+        Objects.requireNonNull(action);
+        for (T t : collection) {
+            action.accept(t);
+        }
+    }
+
+    //correct?
+    /*private <T> void readWithException(DataInputStream dis, ConsumerWriter<T> action) throws IOException {
+        int size = dis.readInt();
+        Objects.requireNonNull(action);
+        for (int i = 0; i < size; i++) {
+            action.accept(null);
+        }
+    }*/
+
+
+
 }

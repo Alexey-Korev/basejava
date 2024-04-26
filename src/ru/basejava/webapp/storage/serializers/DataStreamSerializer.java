@@ -4,7 +4,10 @@ import ru.basejava.webapp.model.*;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 public class DataStreamSerializer implements SerializerStrategy {
     public void doWrite(Resume resume, OutputStream os) throws IOException {
@@ -42,58 +45,63 @@ public class DataStreamSerializer implements SerializerStrategy {
         }
     }
 
-    @Override
     public Resume doRead(InputStream is) throws IOException {
         try (DataInputStream dis = new DataInputStream(is)) {
             String uuid = dis.readUTF();
             String fullName = dis.readUTF();
             Resume resume = new Resume(uuid, fullName);
 
-            int size = dis.readInt();
-            for (int i = 0; i < size; i++) {
-                resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
-            }
+            readWithException(dis, () -> {
+                ContactType contactType = ContactType.valueOf(dis.readUTF());
+                String contactValue = dis.readUTF();
+                resume.addContact(contactType, contactValue);
+            });
 
-            int sectionsSize = dis.readInt();
-            for (int i = 0; i < sectionsSize; i++) {
+            readWithException(dis, () -> {
                 SectionType sectionType = SectionType.valueOf(dis.readUTF());
                 switch (sectionType) {
-                    case PERSONAL, OBJECTIVE -> resume.addSection(sectionType, new StringSection(dis.readUTF()));
+                    case OBJECTIVE, PERSONAL -> resume.addSection(sectionType, new StringSection(dis.readUTF()));
                     case ACHIEVEMENT, QUALIFICATIONS -> {
-                        int itemsSize = dis.readInt();
                         List<String> items = new ArrayList<>();
-                        for (int j = 0; j < itemsSize; j++) {
-                            items.add(dis.readUTF());
-                        }
+                        readWithException(dis, () -> items.add(dis.readUTF()));
                         resume.addSection(sectionType, new ListSection(items));
                     }
                     case EXPERIENCE, EDUCATION -> {
-                        int companiesSize = dis.readInt();
                         List<Company> companies = new ArrayList<>();
-                        for (int j = 0; j < companiesSize; j++) {
+                        readWithException(dis, () -> {
                             String title = dis.readUTF();
                             String website = dis.readUTF();
-                            int periodsSize = dis.readInt();
-                            List<Period> periods = new ArrayList<>();
-                            for (int k = 0; k < periodsSize; k++) {
-                                periods.add(new Period(dis.readUTF(), dis.readUTF(), LocalDate.parse(dis.readUTF()), LocalDate.parse(dis.readUTF())));
-                            }
-                            Company company = new Company(title, website, periods.toArray(new Period[0]));
-                            companies.add(company);
-                        }
+                            Company currentCompany = new Company(title, website);
+
+                            readWithException(dis, () -> {
+                                LocalDate startDate = LocalDate.parse(dis.readUTF());
+                                LocalDate endDate = LocalDate.parse(dis.readUTF());
+                                String periodTitle = dis.readUTF();
+                                String periodDescription = dis.readUTF();
+                                currentCompany.getPeriod().add(new Period(periodTitle, periodDescription, startDate, endDate));
+                            });
+
+                            companies.add(currentCompany);
+                        });
+
                         resume.addSection(sectionType, new CompanySection(companies));
                     }
-                    default -> throw new IllegalStateException();
+                    default -> throw new IllegalStateException("Invalid section type");
                 }
-            }
+            });
 
             return resume;
         }
     }
 
 
+
     private interface ConsumerWriter<T> {
         void accept(T t) throws IOException;
+    }
+
+    private interface ConsumerReader {
+        void accept() throws IOException;
     }
 
     private <T> void writeWithException(DataOutputStream dos, Collection<T> collection, ConsumerWriter<T> action) throws IOException {
@@ -104,14 +112,13 @@ public class DataStreamSerializer implements SerializerStrategy {
         }
     }
 
-    //correct?
-    /*private <T> void readWithException(DataInputStream dis, ConsumerWriter<T> action) throws IOException {
+    private <T> void readWithException(DataInputStream dis, ConsumerReader action) throws IOException {
         int size = dis.readInt();
         Objects.requireNonNull(action);
         for (int i = 0; i < size; i++) {
-            action.accept(null);
+            action.accept();
         }
-    }*/
+    }
 
 
 

@@ -1,26 +1,20 @@
 package ru.basejava;
 
 public class MainDeadLock {
-    private static final Object LOCK_OBJECT1 = new Object();
-    private static final Object LOCK_OBJECT2 = new Object();
+    private static final String LOCK_OBJECT1 = "Lock_object1";
+    private static final String LOCK_OBJECT2 = "Lock_object2";
+    public static void getMonitor(Object lockObject1, Object lockObject2) {
+        synchronized (lockObject1) {
+            System.out.println("thread " + Thread.currentThread().getName() + " hold " + lockObject1 + " and wait for " + lockObject2);
+            synchronized (lockObject2) {
+                System.out.println("thread " + Thread.currentThread().getName() + " hold " + lockObject2 + " and wait for " + lockObject1);
+            }
+        }
+    }
 
     public static void main(String[] args) {
-        Thread thread1 = new Thread(() -> {
-            synchronized (LOCK_OBJECT1) {
-                System.out.println("поток 1 взял 1й монитор и ждет 2й монитор");
-                synchronized (LOCK_OBJECT2) {
-                    System.out.println("поток 1 взял 2й монитор");
-                }
-            }
-        });
-        Thread thread2 = new Thread(() -> {
-            synchronized (LOCK_OBJECT2) {
-                System.out.println("поток 2 взял 2й монитор и ждет 1й монитор");
-                synchronized (LOCK_OBJECT1) {
-                    System.out.println("поток 2 взял 1й монитор");
-                }
-            }
-        });
+        Thread thread1 = new Thread(() -> getMonitor(LOCK_OBJECT1, LOCK_OBJECT2));
+        Thread thread2 = new Thread(() -> getMonitor(LOCK_OBJECT2, LOCK_OBJECT1));
 
         thread1.start();
         thread2.start();

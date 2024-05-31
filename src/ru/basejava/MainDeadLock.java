@@ -7,7 +7,7 @@ public class MainDeadLock {
         synchronized (lockObject1) {
             System.out.println("thread " + Thread.currentThread().getName() + " hold " + lockObject1 + " and wait for " + lockObject2);
             synchronized (lockObject2) {
-                System.out.println("thread " + Thread.currentThread().getName() + " hold " + lockObject2 + " and wait for " + lockObject1);
+                System.out.println("thread " + Thread.currentThread().getName() + " hold " + lockObject2);
             }
         }
     }

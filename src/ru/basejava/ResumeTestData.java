@@ -2,9 +2,6 @@ package ru.basejava;
 
 import ru.basejava.webapp.model.*;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class ResumeTestData {
@@ -44,7 +41,7 @@ public class ResumeTestData {
     public static Resume resumeCreate(String uuid, String fullname){
         Resume resume =  new Resume(uuid, fullname);
         //resume contacts
-        resume.getContacts().put(ContactType.NUMBER, "+7(921) 855-0482");
+       /* resume.getContacts().put(ContactType.NUMBER, "+7(921) 855-0482");
         resume.getContacts().put(ContactType.SKYPE, "skype:grigory.kislin");
         resume.getContacts().put(ContactType.MAIL, "gkislin@yandex.ru");
         resume.getContacts().put(ContactType.LINKEDIN, "https://www.linkedin.com/in/gkislin/");
@@ -114,7 +111,7 @@ public class ResumeTestData {
         companies.add(courseraComp);
         companies.add(luxoftComp);
         AbstractSection institutionSection = new CompanySection(companies);
-        resume.getSections().put(SectionType.EDUCATION, institutionSection);
+        resume.getSections().put(SectionType.EDUCATION, institutionSection);*/
         return resume;
     }
 }

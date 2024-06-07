@@ -6,7 +6,6 @@ import ru.basejava.webapp.sql.SqlHelper;
 
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,13 +74,13 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        return sqlHelper.execute("SELECT uuid, full_name FROM resume order by uuid", ps -> {
+        return sqlHelper.execute("SELECT uuid, full_name FROM resume order by full_name, uuid", ps -> {
             ResultSet rs = ps.executeQuery();
-            List<Resume> result = new ArrayList<>();
+            List<Resume> resumes = new ArrayList<>();
             while (rs.next()) {
-                result.add(new Resume(rs.getString("uuid"), rs.getString("full_name")));
+                resumes.add(new Resume(rs.getString("uuid"), rs.getString("full_name")));
             }
-            return result;
+            return resumes;
         });
     }
 
@@ -89,10 +88,7 @@ public class SqlStorage implements Storage {
     public int size() {
         return sqlHelper.execute("SELECT count(uuid) FROM resume", ps -> {
             ResultSet rs = ps.executeQuery();
-            if (!rs.next()) {
-                throw new SQLException();
-            }
-            return rs.getInt(1);
+            return rs.next() ? rs.getInt(1) : 0;
         });
     }
 }

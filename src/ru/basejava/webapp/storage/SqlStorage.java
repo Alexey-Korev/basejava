@@ -1,8 +1,6 @@
 package ru.basejava.webapp.storage;
 
-import ru.basejava.webapp.exception.ExistStorageException;
 import ru.basejava.webapp.exception.NotExistStorageException;
-import ru.basejava.webapp.exception.StorageException;
 import ru.basejava.webapp.model.Resume;
 import ru.basejava.webapp.sql.SqlHelper;
 
@@ -42,30 +40,13 @@ public class SqlStorage implements Storage {
 
     @Override
     public void save(Resume r) {
-        try {
             sqlHelper.execute("INSERT INTO resume (uuid, full_name) VALUES (?, ?)", ps -> {
                 ps.setString(1, r.getUuid());
                 ps.setString(2, r.getFullName());
                 ps.execute();
                 return null;
             });
-        } catch (StorageException e) {
-            if (e.getCause() instanceof SQLException sqlException && sqlException.getSQLState().equals("23505"))
-                //23505 - A violation of the constraint imposed by a unique index or a unique constraint occurred.
-                    throw new ExistStorageException(r.getUuid());
-            throw e;
         }
-        /*try {
-            sqlHelper.execute("INSERT INTO resume (uuid, full_name) VALUES (?, ?)", ps -> {
-                ps.setString(1, r.getUuid());
-                ps.setString(2, r.getFullName());
-                ps.execute();
-                return null;
-            });
-        } catch (StorageException e) {
-            throw new ExistStorageException(r.getUuid());
-        }*/
-    }
 
     @Override
     public Resume get(String uuid) {
@@ -85,13 +66,16 @@ public class SqlStorage implements Storage {
         sqlHelper.execute("DELETE FROM resume WHERE uuid = ?", ps -> {
             ps.setString(1, uuid);
             ps.execute();
+            if (ps.executeUpdate() == 0) {
+                throw new NotExistStorageException(uuid);
+            }
             return null;
         });
     }
 
     @Override
     public List<Resume> getAllSorted() {
-        return sqlHelper.execute("SELECT uuid, full_name FROM resume", ps -> {
+        return sqlHelper.execute("SELECT uuid, full_name FROM resume order by uuid", ps -> {
             ResultSet rs = ps.executeQuery();
             List<Resume> result = new ArrayList<>();
             while (rs.next()) {

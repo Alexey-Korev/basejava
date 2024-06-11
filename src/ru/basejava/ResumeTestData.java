@@ -1,6 +1,7 @@
 package ru.basejava;
 
-import ru.basejava.webapp.model.*;
+import ru.basejava.webapp.model.ContactType;
+import ru.basejava.webapp.model.Resume;
 
 import java.util.Map;
 
@@ -13,7 +14,7 @@ public class ResumeTestData {
             System.out.println("\n" + entry.getKey() + " : " + entry.getValue());
         }
 
-        for (Map.Entry<SectionType, AbstractSection> entry : resume.getSections().entrySet()) {
+        /*for (Map.Entry<SectionType, AbstractSection> entry : resume.getSections().entrySet()) {
             if (entry.getKey() == SectionType.PERSONAL || entry.getKey() == SectionType.OBJECTIVE) {
                 System.out.println(entry.getKey() + " : " + ((StringSection) entry.getValue()).getText());
             }
@@ -34,21 +35,21 @@ public class ResumeTestData {
                 }
 
             }
-        }
+        }*/
 
     }
 
     public static Resume resumeCreate(String uuid, String fullname){
         Resume resume =  new Resume(uuid, fullname);
         //resume contacts
-       /* resume.getContacts().put(ContactType.NUMBER, "+7(921) 855-0482");
+        resume.getContacts().put(ContactType.NUMBER, "+7(921) 855-0482");
         resume.getContacts().put(ContactType.SKYPE, "skype:grigory.kislin");
         resume.getContacts().put(ContactType.MAIL, "gkislin@yandex.ru");
         resume.getContacts().put(ContactType.LINKEDIN, "https://www.linkedin.com/in/gkislin/");
         resume.getContacts().put(ContactType.GITHUB, "https://github.com/gkislin");
         resume.getContacts().put(ContactType.STACKOVERFLOW, "https://stackoverflow.com/users/548473/grigory-kislin");
 
-        // resume string section
+        /*// resume string section
         AbstractSection position = new StringSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям");
         AbstractSection personal = new StringSection("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры.");
         resume.getSections().put(SectionType.OBJECTIVE, position);

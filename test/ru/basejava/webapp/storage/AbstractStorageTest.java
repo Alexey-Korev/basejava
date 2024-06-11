@@ -7,6 +7,7 @@ import ru.basejava.ResumeTestData;
 import ru.basejava.Config;
 import ru.basejava.webapp.exception.ExistStorageException;
 import ru.basejava.webapp.exception.NotExistStorageException;
+import ru.basejava.webapp.model.ContactType;
 import ru.basejava.webapp.model.Resume;
 
 import java.io.File;
@@ -63,6 +64,12 @@ public abstract class AbstractStorageTest {
     @Test
     public void update() {
         Resume newResume = new Resume(UUID_1, "New Name");
+        newResume.getContacts().put(ContactType.NUMBER, "+7(921) 855-0482");
+        newResume.getContacts().put(ContactType.SKYPE, "skype:grigory.kislin");
+        newResume.getContacts().put(ContactType.MAIL, "gkislin@yandex.ru");
+        newResume.getContacts().put(ContactType.LINKEDIN, "https://www.linkedin.com/in/gkislin/");
+        newResume.getContacts().put(ContactType.GITHUB, "https://github.com/gkislin");
+        newResume.getContacts().put(ContactType.STACKOVERFLOW, "https://stackoverflow.com/users/548473/grigory-kislin");
         storage.update(newResume);
         Assert.assertTrue(newResume.equals(storage.get(UUID_1)));
     }

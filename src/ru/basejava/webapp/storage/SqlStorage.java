@@ -33,15 +33,12 @@ public class SqlStorage implements Storage {
                     try (PreparedStatement ps = conn.prepareStatement("UPDATE resume SET full_name = ? WHERE uuid = ?")) {
                         ps.setString(1, r.getFullName());
                         ps.setString(2, uuid);
-                        ps.execute();
-                        if (ps.executeUpdate() == 0) {
+                        if (ps.executeUpdate() != 1) {
                             throw new NotExistStorageException(uuid);
                         }
                     }
-                    try (PreparedStatement ps = conn.prepareStatement("DELETE FROM contact WHERE resume_uuid = ?")) {
-                        ps.setString(1, uuid);
-                        ps.execute();
-                    }
+
+                    deleteContact(conn, r);
                     insertContact(conn, r);
                     return null;
                 }
@@ -141,6 +138,13 @@ public class SqlStorage implements Storage {
                 ps.addBatch();
             }
             ps.executeBatch();
+        }
+    }
+
+    private void deleteContact(Connection conn, Resume r) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement("DELETE FROM contact WHERE resume_uuid = ?")) {
+            ps.setString(1, r.getUuid());
+            ps.execute();
         }
     }
 }

@@ -61,20 +61,25 @@ public class SqlStorage implements Storage {
 
     @Override
     public Resume get(String uuid) {
-        return sqlHelper.execute("SELECT * FROM resume r " +
-                "                  LEFT JOIN contact c " +
-                "                         ON r.uuid = c.resume_uuid " +
-                "                      WHERE uuid = ?", ps -> {
-            ps.setString(1, uuid);
-            ResultSet rs = ps.executeQuery();
-            if (!rs.next()) {
-                throw new NotExistStorageException(uuid);
+        return sqlHelper.transactionalExecute(conn -> {
+            Resume resume;
+            try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM resume WHERE uuid = ?")) {
+                ps.setString(1, uuid);
+                ResultSet rs = ps.executeQuery();
+                if (!rs.next()) {
+                    throw new NotExistStorageException(uuid);
+                }
+                resume = new Resume(uuid, rs.getString("full_name"));
             }
-            Resume r = new Resume(uuid, rs.getString("full_name"));
-            do {
-                addContact(rs, r);
-            } while (rs.next());
-            return r;
+
+            try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM contact WHERE resume_uuid = ?")) {
+                ps.setString(1, uuid);
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    addContact(rs, resume);
+                }
+            }
+            return resume;
         });
     }
 
@@ -93,23 +98,26 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        return sqlHelper.execute("SELECT * FROM resume r " +
-                "                  LEFT JOIN contact c " +
-                "                         ON r.uuid = c.resume_uuid " +
-                "                   ORDER BY full_name, r.uuid", ps -> {
-            ResultSet rs = ps.executeQuery();
-            Map<String, Resume> resumeMap = new LinkedHashMap<>();
-
-            while (rs.next()) {
-                String uuid = rs.getString("uuid");
-                Resume resume = resumeMap.get(uuid);
-                if (resume == null) {
-                    resume = new Resume(uuid, rs.getString("full_name"));
-                    resumeMap.put(uuid, resume);
+        return sqlHelper.transactionalExecute(conn -> {
+            Map<String, Resume> resumes = new LinkedHashMap<>();
+            try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM resume ORDER BY full_name, uuid")) {
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    resumes.put(rs.getString("uuid"), new Resume(rs.getString("uuid"), rs.getString("full_name")));
                 }
-                addContact(rs, resume);
             }
-            return new ArrayList<>(resumeMap.values());
+
+            try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM contact")) {
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    String resumeUuid = rs.getString("resume_uuid");
+                    Resume resume = resumes.get(resumeUuid);
+                    if (resume != null) {
+                        addContact(rs, resume);
+                    }
+                }
+            }
+            return new ArrayList<>(resumes.values());
         });
     }
 

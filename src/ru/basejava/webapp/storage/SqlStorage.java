@@ -184,12 +184,8 @@ public class SqlStorage implements Storage {
                 AbstractSection section = e.getValue();
 
                 switch (e.getKey()) {
-                    case OBJECTIVE, PERSONAL -> {
-                            ps.setString(3, ((StringSection) section).getText());
-                    }
-                    case ACHIEVEMENT, QUALIFICATIONS -> {
-                        ps.setString(3, String.join("\n", ((ListSection) section).getText()));
-                    }
+                    case OBJECTIVE, PERSONAL -> ps.setString(3, ((StringSection) section).getText());
+                    case ACHIEVEMENT, QUALIFICATIONS -> ps.setString(3, String.join("\n", ((ListSection) section).getText()));
                     default -> throw new StorageException(r.getUuid());
                 }
                 ps.addBatch();

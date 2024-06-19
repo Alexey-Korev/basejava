@@ -1,15 +1,12 @@
 package ru.basejava.webapp.storage;
 
 import ru.basejava.webapp.exception.NotExistStorageException;
-import ru.basejava.webapp.model.ContactType;
-import ru.basejava.webapp.model.Resume;
+import ru.basejava.webapp.exception.StorageException;
+import ru.basejava.webapp.model.*;
 import ru.basejava.webapp.sql.SqlHelper;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SqlStorage implements Storage {
     private final SqlHelper sqlHelper;
@@ -40,6 +37,7 @@ public class SqlStorage implements Storage {
 
                     deleteContact(conn, r);
                     insertContact(conn, r);
+                    insertSection(conn, r);
                     return null;
                 }
         );
@@ -54,6 +52,7 @@ public class SqlStorage implements Storage {
                         ps.execute();
                     }
                     insertContact(conn, r);
+                    insertSection(conn, r);
                     return null;
                 }
         );
@@ -77,6 +76,13 @@ public class SqlStorage implements Storage {
                 ResultSet rs = ps.executeQuery();
                 while (rs.next()) {
                     addContact(rs, resume);
+                }
+            }
+            try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM section WHERE resume_uuid = ?")) {
+                ps.setString(1, uuid);
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    addSection(rs, resume);
                 }
             }
             return resume;
@@ -117,6 +123,14 @@ public class SqlStorage implements Storage {
                     }
                 }
             }
+            try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM section")) {
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    String resumeUuid = rs.getString("resume_uuid");
+                    Resume resume = resumes.get(resumeUuid);
+                    addSection(rs, resume);
+                }
+            }
             return new ArrayList<>(resumes.values());
         });
     }
@@ -132,8 +146,21 @@ public class SqlStorage implements Storage {
     private void addContact(ResultSet rs, Resume r) throws SQLException {
         String value = rs.getString("value");
         if (value != null) {
-            ContactType type = ContactType.valueOf(rs.getString("type"));
-            r.addContact(type, value);
+            r.addContact(ContactType.valueOf(rs.getString("type")), value);
+        }
+    }
+
+    private void addSection(ResultSet rs, Resume resume) throws SQLException {
+        String value = rs.getString("value");
+        if (value != null) {
+            SectionType type = SectionType.valueOf(rs.getString("type"));
+            switch (type) {
+                case OBJECTIVE, PERSONAL -> resume.addSection(type, new StringSection(value.trim()));
+                case ACHIEVEMENT, QUALIFICATIONS -> {
+                    List<String> valueList = new ArrayList<>(Arrays.asList(value.split("\n")));
+                    resume.addSection(type, new ListSection(valueList));
+                }
+            }
         }
     }
 
@@ -143,6 +170,28 @@ public class SqlStorage implements Storage {
                 ps.setString(1, r.getUuid());
                 ps.setString(2, e.getKey().name());
                 ps.setString(3, e.getValue());
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        }
+    }
+
+    private void insertSection(Connection conn, Resume r) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement("INSERT INTO section (resume_uuid, type, value) VALUES (?,?,?)")) {
+            for (Map.Entry<SectionType, AbstractSection> e : r.getSections().entrySet()) {
+                ps.setString(1, r.getUuid());
+                ps.setString(2, e.getKey().name());
+                AbstractSection section = e.getValue();
+
+                switch (e.getKey()) {
+                    case OBJECTIVE, PERSONAL -> {
+                            ps.setString(3, ((StringSection) section).getText());
+                    }
+                    case ACHIEVEMENT, QUALIFICATIONS -> {
+                        ps.setString(3, String.join("\n", ((ListSection) section).getText()));
+                    }
+                    default -> throw new StorageException(r.getUuid());
+                }
                 ps.addBatch();
             }
             ps.executeBatch();

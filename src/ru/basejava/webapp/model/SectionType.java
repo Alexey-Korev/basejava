@@ -4,7 +4,7 @@ public enum SectionType {
     PERSONAL("Личные качества"),
     OBJECTIVE("Позиция"),
     ACHIEVEMENT("Достижения"),
-    QUALIFICATIONS("Квалицикация"),
+    QUALIFICATIONS("Квалификация"),
     EXPERIENCE("Опыт работы"),
     EDUCATION("Образование");
 

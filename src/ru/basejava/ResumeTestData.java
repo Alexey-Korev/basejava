@@ -1,8 +1,9 @@
 package ru.basejava;
 
-import ru.basejava.webapp.model.ContactType;
-import ru.basejava.webapp.model.Resume;
+import ru.basejava.webapp.model.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class ResumeTestData {
@@ -49,7 +50,7 @@ public class ResumeTestData {
         resume.getContacts().put(ContactType.GITHUB, "https://github.com/gkislin");
         resume.getContacts().put(ContactType.STACKOVERFLOW, "https://stackoverflow.com/users/548473/grigory-kislin");
 
-        /*// resume string section
+        // resume string section
         AbstractSection position = new StringSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям");
         AbstractSection personal = new StringSection("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры.");
         resume.getSections().put(SectionType.OBJECTIVE, position);
@@ -74,12 +75,13 @@ public class ResumeTestData {
         qualification.add(" ● Python: Django.");
         qualification.add(" ● JavaScript: jQuery, ExtJS, Bootstrap.js, underscore.js");
         qualification.add(" ● Scala: SBT, Play2, Specs2, Anorm, Spray, Akka");
-        qualification.add(" ● Технологии: Servlet, JSP/JSTL, JAX-WS, REST, EJB, RMI, JMS, JavaMail, JAXB, StAX, SAX, DOM, XSLT, MDB, JMX, JDBC, JPA, JNDI, JAAS, SOAP, AJAX, Commet, HTML5, ESB, CMIS, BPMN2, LDAP, OAuth1, OAuth2, JWT.\");\n");
+        qualification.add(" ● Технологии: Servlet, JSP/JSTL, JAX-WS, REST, EJB, RMI, JMS, JavaMail, JAXB, StAX, SAX, DOM, XSLT, MDB, JMX, JDBC, JPA, JNDI, JAAS, SOAP, AJAX, Commet, HTML5, ESB, CMIS, BPMN2, LDAP, OAuth1, OAuth2, JWT.\");");
         AbstractSection listAchieventsSection = new ListSection(achievents);
         AbstractSection ListQualificationSection = new ListSection(qualification);
         resume.getSections().put(SectionType.ACHIEVEMENT, listAchieventsSection);
         resume.getSections().put(SectionType.QUALIFICATIONS, ListQualificationSection);
 
+        /*
         //resume company section
         //experience
         Period javaOnlineProjectsPeriod = new Period("Java Online Projects",

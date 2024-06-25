@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import ru.basejava.Config;
-import ru.basejava.ResumeTestData;
 import ru.basejava.webapp.exception.ExistStorageException;
 import ru.basejava.webapp.exception.NotExistStorageException;
 import ru.basejava.webapp.model.*;
@@ -14,11 +13,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static ru.basejava.webapp.TestData.*;
+
 public abstract class AbstractStorageTest {
 
     protected static final File STORAGE_DIR = Config.get().getStorageDir();
     protected final Storage storage;
-    private static final String UUID_1 = "uuid1";
+    /*private static final String UUID_1 = "uuid1";
     protected static final String UUID_2 = "uuid2";
     protected static final String UUID_3 = "uuid3";
     protected static final String UUID_4 = "uuid4";
@@ -33,17 +34,19 @@ public abstract class AbstractStorageTest {
     protected static final Resume RESUME2;
     protected static final Resume RESUME3;
     protected static final Resume RESUME4;
+    */
 
     public AbstractStorageTest(Storage storage) {
         this.storage = storage;
     }
 
+    /*
     static {
         RESUME1 = ResumeTestData.resumeCreate(UUID_1, FULLNAME_1);
         RESUME2 = ResumeTestData.resumeCreate(UUID_2, FULLNAME_2);
         RESUME3 = ResumeTestData.resumeCreate(UUID_3, FULLNAME_3);
         RESUME4 = ResumeTestData.resumeCreate(UUID_4, FULLNAME_4);
-    }
+    }*/
 
     @Before
     public void setUp() {

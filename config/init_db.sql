@@ -9,6 +9,8 @@ create table public.contact (
     type        text          not null,
     value       text          not null
 );
+create unique index contact_uuid_type_index
+    on contact (resume_uuid, type);
 
 create table public.section (
     id          serial,
@@ -17,5 +19,5 @@ create table public.section (
     value       text          not null
 );
 
-create unique index contact_uuid_type_index
-    on contact (resume_uuid, type);
+create unique index section_index
+    on section (resume_uuid, type);

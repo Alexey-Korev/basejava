@@ -2,6 +2,7 @@ package ru.basejava;
 
 import ru.basejava.webapp.model.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,7 @@ public class ResumeTestData {
             System.out.println("\n" + entry.getKey() + " : " + entry.getValue());
         }
 
-        /*for (Map.Entry<SectionType, AbstractSection> entry : resume.getSections().entrySet()) {
+        for (Map.Entry<SectionType, AbstractSection> entry : resume.getSections().entrySet()) {
             if (entry.getKey() == SectionType.PERSONAL || entry.getKey() == SectionType.OBJECTIVE) {
                 System.out.println(entry.getKey() + " : " + ((StringSection) entry.getValue()).getText());
             }
@@ -36,7 +37,7 @@ public class ResumeTestData {
                 }
 
             }
-        }*/
+        }
 
     }
 
@@ -81,7 +82,6 @@ public class ResumeTestData {
         resume.getSections().put(SectionType.ACHIEVEMENT, listAchieventsSection);
         resume.getSections().put(SectionType.QUALIFICATIONS, ListQualificationSection);
 
-        /*
         //resume company section
         //experience
         Period javaOnlineProjectsPeriod = new Period("Java Online Projects",
@@ -114,7 +114,7 @@ public class ResumeTestData {
         companies.add(courseraComp);
         companies.add(luxoftComp);
         AbstractSection institutionSection = new CompanySection(companies);
-        resume.getSections().put(SectionType.EDUCATION, institutionSection);*/
+        resume.getSections().put(SectionType.EDUCATION, institutionSection);
         return resume;
     }
 }

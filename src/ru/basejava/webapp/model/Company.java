@@ -19,7 +19,7 @@ public class Company implements Serializable {
         Objects.requireNonNull(title, "title can't be null");
         this.title = title;
         this.website = website;
-        Arrays.asList(period);
+        this.period.addAll(Arrays.asList(period));
     }
 
     public Company() {}

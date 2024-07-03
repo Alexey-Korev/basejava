@@ -14,10 +14,11 @@
 <section>
     <h2>${resume.fullName}&nbsp;<a href="resume?uuid=${resume.uuid}&action=edit"><img src="img/pencil.png"></a></h2>
     <p>
-        <c:forEach var="contactEntry" items="${resume.contacts}">
-            <jsp:useBean id="contactEntry" type="java.util.Map.Entry<ru.basejava.webapp.model.ContactType, java.lang.String>"/>
-                <%=contactEntry.getKey().toHtml(contactEntry.getValue())%><br/>
-        </c:forEach>
+            <c:forEach var="contactEntry" items="${resume.contacts}">
+                <jsp:useBean id="contactEntry" type="java.util.Map.Entry<ru.basejava.webapp.model.ContactType, java.lang.String>"/>
+            <img src="img/${contactEntry.key.name().toLowerCase()}.png" alt="${contactEntry.key.title}" />
+                    <%=contactEntry.getKey().toHtml(contactEntry.getValue())%><br/>
+            </c:forEach>
     <p>
         <c:forEach var="sectionEntry" items="${resume.sections}">
     <h3>${sectionEntry.key.title}</h3>
@@ -32,7 +33,7 @@
                 </c:forEach>
             </ul>
         </c:when>
-        <c:when test="${sectionEntry.value['class'].name eq 'ru.basejava.webapp.model.CompanySection'}">
+        <%--<c:when test="${sectionEntry.value['class'].name eq 'ru.basejava.webapp.model.CompanySection'}">
             <c:forEach var="company" items="${sectionEntry.value.companies}">
                 <h4>${company.title}</h4>
                 <p><a href="${company.website}" target="_blank">${company.website}</a></p>
@@ -43,7 +44,7 @@
                     </c:forEach>
                 </ul>
             </c:forEach>
-        </c:when>
+        </c:when>--%>
     </c:choose>
     </c:forEach>
 </section>

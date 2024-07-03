@@ -12,6 +12,10 @@
 <body>
 <jsp:include page="fragments/header.jsp"/>
 <section>
+    <form action="resume" method="get">
+        <input type="hidden" name="action" value="create"/>
+        <button type="submit"><img src="img/add.png"></button>
+    </form>
     <table border="1" cellpadding="8" cellspacing="0">
         <tr>
             <th>Имя</th>

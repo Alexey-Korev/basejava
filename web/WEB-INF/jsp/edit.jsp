@@ -16,59 +16,52 @@
 <section>
     <form method="post" action="resume">
         <input type="hidden" name="uuid" value="${resume.uuid}"/>
-        <div>
-            <label for="fullName">Полное имя</label>
-            <input type="text" id="fullName" name="fullName" value="${resume.fullName}" required/><br/>
-        </div>
+        <label for="fullName">Полное имя</label>
+        <input type="text" id="fullName" name="fullName" value="${resume.fullName}" required/><br/>
 
-        <c:forEach var="contactEntry" items="${resume.contacts}">
-            <div>
-                <label for="${contactEntry.key.name()}">${contactEntry.key.title}</label>
-                <input type="text" id="${contactEntry.key.name()}" name="${contactEntry.key.name()}" value="${contactEntry.value}"/><br/>
-            </div>
+        <c:forEach var="contactType" items="${ContactType.values()}">
+            <label for="${contactType.name()}">${contactType.title}</label>
+            <input type="text" id="${contactType.name()}" name="${contactType.name()}" value="${resume.contacts[contactType] != null ? resume.contacts[contactType] : ''}"/><br/>
         </c:forEach>
 
-        <c:forEach var="sectionEntry" items="${resume.sections}">
-            <div>
-                <label>${sectionEntry.key.title}</label><br/>
-                <c:choose>
-                    <c:when test="${sectionEntry.value['class'].name eq 'ru.basejava.webapp.model.StringSection'}">
-                        <textarea style="width: 700px; height: 150px;" id="${sectionEntry.key.name()}" name="${sectionEntry.key.name()}">${sectionEntry.value.text}</textarea><br/>
+        <c:forEach var="sectionType" items="${SectionType.values()}">
+            <c:set var="section" value="${resume.sections[sectionType]}"/>
+            <label for="${sectionType.name()}">${sectionType.title}</label><br/>
+            <c:choose>
+                <c:when test="${sectionType eq 'PERSONAL' || sectionType eq 'OBJECTIVE'}">
+                    <textarea style="width: 700px; height: 150px;" id="${sectionType.name()}" name="${sectionType.name()}"><c:out value="${section != null ? section.text : ''}"/></textarea><br/>
+                </c:when>
+                <c:when test="${sectionType eq 'ACHIEVEMENT' || sectionType eq 'QUALIFICATIONS'}">
+                    <textarea style="width: 700px; height: 150px;" id="${sectionType.name()}" name="${sectionType.name()}"><c:forEach var="item" items="${section != null ? section.text : ''}">${item}</c:forEach></textarea><br/>
                     </c:when>
-                    <c:when test="${sectionEntry.value['class'].name eq 'ru.basejava.webapp.model.ListSection'}">
-                        <textarea style="width: 700px; height: 150px;" id="${sectionEntry.key.name()}" name="${sectionEntry.key.name()}">
-                            <c:forEach var="item" items="${sectionEntry.value.text}">
-                                ${item}
+
+                <%--<c:when test="${sectionType eq 'EXPERIENCE' || sectionType eq 'EDUCATION'}">
+                    <c:forEach var="company" items="${sectionType.value.companies}">
+                        <div>
+                            <label for="companyName">Название компании</label>
+                            <input type="text" id="companyName" name="${sectionEntry.key.name()}CompanyName" value="${company.title}" /><br/>
+                            <label for="companyWebsite">Вебсайт компании</label>
+                            <input type="text" id="companyWebsite" name="${sectionEntry.key.name()}CompanyWebsite" value="${company.website}" /><br/>
+                            <c:forEach var="period" items="${company.period}">
+                                <div>
+                                    <label for="periodTitle">Должность</label>
+                                    <input type="text" id="periodTitle" name="${sectionEntry.key.name()}PeriodTitle" value="${period.title}" /><br/>
+                                    <label for="periodDescription">Описание</label>
+                                    <textarea id="periodDescription" name="${sectionEntry.key.name()}PeriodDescription" style="width: 700px; height: 150px;">${period.description}</textarea><br/>
+                                    <label for="periodStartDate">Дата начала</label>
+                                    <input type="date" id="periodStartDate" name="${sectionEntry.key.name()}PeriodStartDate" value="${period.startDate}" /><br/>
+                                    <label for="periodEndDate">Дата окончания</label>
+                                    <input type="date" id="periodEndDate" name="${sectionEntry.key.name()}PeriodEndDate" value="${period.endDate}" /><br/>
+                                </div>
                             </c:forEach>
-                        </textarea><br/>
-                    </c:when>
-                    <c:when test="${sectionEntry.value['class'].name eq 'ru.basejava.webapp.model.CompanySection'}">
-                        <c:forEach var="company" items="${sectionEntry.value.companies}">
-                            <div>
-                                <label for="companyTitle-${company.hashCode()}">Название компании</label>
-                                <input type="text" id="companyTitle-${company.hashCode()}" name="companyTitle-${company.hashCode()}" value="${company.title}" /><br/>
-                                <label for="companyWebsite-${company.hashCode()}">Вебсайт компании</label>
-                                <input type="text" id="companyWebsite-${company.hashCode()}" name="companyWebsite-${company.hashCode()}" value="${company.website}" /><br/>
-                                <c:forEach var="period" items="${company.period}">
-                                    <div>
-                                        <label for="periodTitle-${period.hashCode()}">Должность</label>
-                                        <input type="text" id="periodTitle-${period.hashCode()}" name="periodTitle-${period.hashCode()}" value="${period.title}" /><br/>
-                                        <label for="periodDescription-${period.hashCode()}">Описание</label>
-                                        <textarea id="periodDescription-${period.hashCode()}" name="periodDescription-${period.hashCode()}" style="width: 700px; height: 150px;">${period.description}</textarea><br/>
-                                        <label for="periodStartDate-${period.hashCode()}">Дата начала</label>
-                                        <input type="date" id="periodStartDate-${period.hashCode()}" name="periodStartDate-${period.hashCode()}" value="${period.startDate}" /><br/>
-                                        <label for="periodEndDate-${period.hashCode()}">Дата окончания</label>
-                                        <input type="date" id="periodEndDate-${period.hashCode()}" name="periodEndDate-${period.hashCode()}" value="${period.endDate}" /><br/>
-                                    </div>
-                                </c:forEach>
-                            </div>
-                        </c:forEach>
-                    </c:when>
-                </c:choose>
-            </div>
+                        </div>
+                    </c:forEach>
+                </c:when>--%>
+            </c:choose>
         </c:forEach>
 
         <button type="submit">Сохранить</button>
+        <button type="button" onclick="window.history.back()">Отменить</button>
     </form>
 </section>
 <jsp:include page="fragments/footer.jsp"/>

@@ -31,7 +31,7 @@ public class DataStreamSerializer implements SerializerStrategy {
                             writeWithException(dos, ((CompanySection) section).getCompanies(), organization -> {
                                 dos.writeUTF(organization.getTitle());
                                 dos.writeUTF(organization.getWebsite());
-                                writeWithException(dos, organization.getPeriod(), position -> {
+                                writeWithException(dos, organization.getPeriods(), position -> {
                                     dos.writeUTF(position.getStartDate().toString());
                                     dos.writeUTF(position.getEndDate().toString());
                                     dos.writeUTF(position.getTitle());
@@ -78,7 +78,7 @@ public class DataStreamSerializer implements SerializerStrategy {
                                 LocalDate endDate = LocalDate.parse(dis.readUTF());
                                 String periodTitle = dis.readUTF();
                                 String periodDescription = dis.readUTF();
-                                currentCompany.getPeriod().add(new Period(periodTitle, periodDescription, startDate, endDate));
+                                currentCompany.getPeriods().add(new Period(periodTitle, periodDescription, startDate, endDate));
                             });
 
                             companies.add(currentCompany);

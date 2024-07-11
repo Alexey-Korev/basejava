@@ -34,7 +34,7 @@ public class ResumeTestData {
                 for (Company company : ((CompanySection) section).getCompanies()) {
                     System.out.println(company.getTitle() + " " + company.getTitle() + " " +
                             company.getWebsite() + " " +
-                            company.getPeriod());
+                            company.getPeriods());
                 }
 
             }
@@ -95,10 +95,10 @@ public class ResumeTestData {
         Company javaOps = new Company("java Online ProjectsPeriod", "https://javaops.ru/", javaOnlineProjectsPeriod);
         Company wrike = new Company("Wrike", "https://www.wrike.com/", wrikePeriod);
 
-        List<Company> companies = new ArrayList<>();
-        companies.add(javaOps);
-        companies.add(wrike);
-        AbstractSection companySection = new CompanySection(companies);
+        List<Company> experienceCompanies = new ArrayList<>();
+        experienceCompanies.add(javaOps);
+        experienceCompanies.add(wrike);
+        AbstractSection companySection = new CompanySection(experienceCompanies);
         resume.getSections().put(SectionType.EXPERIENCE, companySection);
 
         //education
@@ -113,9 +113,10 @@ public class ResumeTestData {
         Company luxoftComp = new Company("Luxoft", "http://www.luxoft-training.ru/training/catalog/course.html?ID=22366",
                 luxoft);
 
-        companies.add(courseraComp);
-        companies.add(luxoftComp);
-        AbstractSection institutionSection = new CompanySection(companies);
+        List<Company> educationCompanies = new ArrayList<>();
+        educationCompanies.add(courseraComp);
+        educationCompanies.add(luxoftComp);
+        AbstractSection institutionSection = new CompanySection(educationCompanies);
         resume.getSections().put(SectionType.EDUCATION, institutionSection);
         return resume;
     }

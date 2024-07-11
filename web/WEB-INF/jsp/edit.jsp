@@ -34,7 +34,32 @@
                 <c:when test="${sectionType eq 'ACHIEVEMENT' || sectionType eq 'QUALIFICATIONS'}">
                     <textarea style="width: 700px; height: 150px;" id="${sectionType.name()}" name="${sectionType.name()}"><c:forEach var="item" items="${section != null ? section.text : ''}">${item}</c:forEach></textarea><br/>
                     </c:when>
-
+                <c:when test="${sectionType eq 'EXPERIENCE' || sectionType eq 'EDUCATION'}">
+                    <div id="${sectionType.name()}Container">
+                        <c:forEach var="company" items="${section.companies}" varStatus="companyStatus">
+                            <!-- ${sectionType.name()}CompanyName${companyStatus.index} -->
+                            <div class="company">
+                                <label for="${sectionType.name()}CompanyName">Название компании</label>
+                                <input type="text" id="${sectionType.name()}CompanyName" name="${sectionType.name()}CompanyName" value="${company.title}" /><br/>
+                                <label for="${sectionType.name()}CompanyWebsite">Вебсайт компании</label>
+                                <input type="text" id="${sectionType.name()}CompanyWebsite" name="${sectionType.name()}CompanyWebsite" value="${company.website}" /><br/>
+                                <c:forEach var="period" items="${company.periods}" varStatus="loop">
+                                    <div class="period">
+                                        <label for="${sectionType.name()}PeriodTitle${loop.index}">Должность</label>
+                                        <input type="text" id="${sectionType.name()}PeriodTitle${loop.index}" name="${sectionType.name()}${loop.index}PeriodTitle" value="${period.title}" /><br/>
+                                        <label for="${sectionType.name()}PeriodDescription${loop.index}">Описание</label>
+                                        <textarea id="${sectionType.name()}PeriodDescription${loop.index}" name="${sectionType.name()}${loop.index}PeriodDescription" style="width: 700px; height: 150px;">${period.description}</textarea><br/>
+                                        <label for="${sectionType.name()}PeriodStartDate${loop.index}">Дата начала</label>
+                                        <input type="date" id="${sectionType.name()}PeriodStartDate${loop.index}" name="${sectionType.name()}${loop.index}PeriodStartDate" value="${period.startDate}" /><br/>
+                                        <label for="${sectionType.name()}PeriodEndDate${loop.index}">Дата окончания</label>
+                                        <input type="date" id="${sectionType.name()}PeriodEndDate${loop.index}" name="${sectionType.name()}${loop.index}PeriodEndDate" value="${period.endDate}" /><br/>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </c:forEach>
+                    </div>
+                    <button type="button" onclick="addCompany('${sectionType.name()}')">Добавить ${sectionType.name() == 'EXPERIENCE' ? 'опыт работы' : 'образование'}</button><br/>
+                </c:when>
                 <%--<c:when test="${sectionType eq 'EXPERIENCE' || sectionType eq 'EDUCATION'}">
                     <c:forEach var="company" items="${sectionType.value.companies}">
                         <div>

@@ -13,13 +13,13 @@ public class Company implements Serializable {
     private static final long serialVersionUID = 1L;
     private String title;
     private String website;
-    private final List<Period> period = new ArrayList<>();
+    private final List<Period> periods = new ArrayList<>();
 
-    public Company(String title, String website, Period... period) {
+    public Company(String title, String website, Period... periods) {
         Objects.requireNonNull(title, "title can't be null");
         this.title = title;
         this.website = website;
-        this.period.addAll(Arrays.asList(period));
+        this.periods.addAll(Arrays.asList(periods));
     }
 
     public Company() {}
@@ -33,8 +33,8 @@ public class Company implements Serializable {
         return website;
     }
 
-    public List<Period> getPeriod() {
-        return period;
+    public List<Period> getPeriods() {
+        return periods;
     }
 
     public void setTitle(String title) {
@@ -50,12 +50,12 @@ public class Company implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Company company = (Company) o;
-        return Objects.equals(title, company.title) && Objects.equals(website, company.website) && Objects.equals(period, company.period);
+        return Objects.equals(title, company.title) && Objects.equals(website, company.website) && Objects.equals(periods, company.periods);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, website, period);
+        return Objects.hash(title, website, periods);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class Company implements Serializable {
         return "Company{" +
                 "title='" + title + '\'' +
                 ", website='" + website + '\'' +
-                ", periods=" + period +
+                ", periods=" + periods +
                 '}';
     }
 }

@@ -3,6 +3,7 @@ package ru.basejava.webapp.web;
 import ru.basejava.Config;
 import ru.basejava.webapp.model.*;
 import ru.basejava.webapp.storage.Storage;
+import ru.basejava.webapp.util.ResumeUtil;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 
 public class ResumeServlet extends HttpServlet {
     private Storage storage;
@@ -127,7 +129,12 @@ public class ResumeServlet extends HttpServlet {
                 response.sendRedirect("resume");
                 return;
             }
-            case "view", "edit" -> r = storage.get(uuid);
+            case "view", "edit" -> {
+                r = storage.get(uuid);
+                Map<SectionType, AbstractSection> sortedSections = ResumeUtil.sortSections(r.getSections());
+                request.setAttribute("resume", r);
+                request.setAttribute("sections", sortedSections);
+            }
             default -> throw new IllegalArgumentException("Action " + action + " is illegal");
         }
         request.setAttribute("resume", r);
@@ -135,4 +142,8 @@ public class ResumeServlet extends HttpServlet {
                 ("view".equals(action) ? "/WEB-INF/jsp/view.jsp" : "/WEB-INF/jsp/edit.jsp")
         ).forward(request, response);
     }
+
+    /*private Resume getResume(String uuid) {
+        return storage.get(uuid);
+    }*/
 }

@@ -13,7 +13,7 @@ public class Company implements Serializable {
     private static final long serialVersionUID = 1L;
     private String title;
     private String website;
-    private final List<Period> periods = new ArrayList<>();
+    private List<Period> periods = new ArrayList<>();
 
     public Company(String title, String website, Period... periods) {
         Objects.requireNonNull(title, "title can't be null");
@@ -23,6 +23,12 @@ public class Company implements Serializable {
     }
 
     public Company() {}
+
+    public Company(String title, String website, List<Period> periods) {
+        this.title = title;
+        this.website = website;
+        this.periods = periods;
+    }
 
 
     public String getTitle() {

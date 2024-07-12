@@ -10,6 +10,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="css/style.css">
     <jsp:useBean id="resume" type="ru.basejava.webapp.model.Resume" scope="request"/>
+    <jsp:useBean id="sections" type="java.util.Map" scope="request"/>
     <title>Резюме ${resume.fullName}</title>
 </head>
 <body>
@@ -25,7 +26,7 @@
     </p>
     <hr>
     <table cellpadding="2">
-        <c:forEach var="sectionEntry" items="${resume.sections}">
+        <c:forEach var="sectionEntry" items="${sections}">
             <jsp:useBean id="sectionEntry" type="java.util.Map.Entry<ru.basejava.webapp.model.SectionType, ru.basejava.webapp.model.AbstractSection>"/>
             <c:set var="type" value="${sectionEntry.key}"/>
             <c:set var="section" value="${sectionEntry.value}"/>
@@ -61,20 +62,20 @@
                 </c:when>
                 <c:when test="${type == 'EXPERIENCE' || type == 'EDUCATION'}">
                     <c:forEach var="experienceCompany" items="<%=((CompanySection) section).getCompanies()%>">
-                    <tr>
+                        <tr>
                             <td colspan="2">
                                 <h3>${experienceCompany.title}</h3>
                                 <c:if test="${not empty experienceCompany.website}">
                                     <p><a href="${experienceCompany.website}" target="_blank">${experienceCompany.website}</a></p>
                                 </c:if>
                             </td>
+                        </tr>
+                        <c:forEach var="experiencePeriod" items="${experienceCompany.periods}">
+                            <jsp:useBean id="experiencePeriod" type="ru.basejava.webapp.model.Period"/>
+                            <tr>
+                                <td width="15%" style="vertical-align: top"><%=HtmlUtil.formatDates(experiencePeriod)%></td>
+                                <td><b>${experiencePeriod.title}</b><br>${experiencePeriod.description}</td>
                             </tr>
-                            <c:forEach var="experiencePeriod" items="${experienceCompany.periods}">
-                                <jsp:useBean id="experiencePeriod" type="ru.basejava.webapp.model.Period"/>
-                                <tr>
-                                    <td width="15%" style="vertical-align: top"><%=HtmlUtil.formatDates(experiencePeriod)%></td>
-                                    <td><b>${experiencePeriod.title}</b><br>${experiencePeriod.description}</td>
-                                </tr>
                         </c:forEach>
                     </c:forEach>
                 </c:when>

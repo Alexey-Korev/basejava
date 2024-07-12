@@ -8,7 +8,14 @@ import java.util.Map;
 
 public class ResumeUtil {
     public static Map<SectionType, AbstractSection> sortSections(Map<SectionType, AbstractSection> sections) {
-        SectionType[] orderedTypes = {SectionType.OBJECTIVE, SectionType.PERSONAL, SectionType.QUALIFICATIONS, SectionType.ACHIEVEMENT, SectionType.EXPERIENCE, SectionType.EDUCATION};
+        SectionType[] orderedTypes = {
+                SectionType.OBJECTIVE,
+                SectionType.PERSONAL,
+                SectionType.QUALIFICATIONS,
+                SectionType.ACHIEVEMENT,
+                SectionType.EXPERIENCE,
+                SectionType.EDUCATION
+        };
 
         Map<SectionType, AbstractSection> sortedSections = new LinkedHashMap<>();
         for (SectionType type : orderedTypes) {

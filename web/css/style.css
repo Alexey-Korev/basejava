@@ -1,12 +1,21 @@
 header {
-    background: none repeat scroll 0 0 #A6C9E2;
+    background: none repeat scroll 0 0 #DCDCDC;
     color: #2E6E9E;
     font-size: 20px;
     padding: 5px 20px;
 }
 
+body {
+    background-image: url('/img/background.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    font-family: Arial, sans-serif;
+}
+
 footer {
-    background: none repeat scroll 0 0 #A6C9E2;
+    background: none repeat scroll 0 0 #DCDCDC;
     color: #2E6E9E;
     font-size: 20px;
     padding: 5px 20px;

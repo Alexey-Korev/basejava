@@ -27,7 +27,6 @@
     <hr>
     <table cellpadding="2">
         <c:forEach var="sectionEntry" items="${sections}">
-            <jsp:useBean id="sectionEntry" type="java.util.Map.Entry<ru.basejava.webapp.model.SectionType, ru.basejava.webapp.model.AbstractSection>"/>
             <c:set var="type" value="${sectionEntry.key}"/>
             <c:set var="section" value="${sectionEntry.value}"/>
             <jsp:useBean id="section" type="ru.basejava.webapp.model.AbstractSection"/>
@@ -35,14 +34,7 @@
                 <td colspan="2"><h2><a name="type.name">${type.title}</a></h2></td>
             </tr>
             <c:choose>
-                <c:when test="${type=='OBJECTIVE'}">
-                    <tr>
-                        <td colspan="2">
-                            <h3><%=((StringSection) section).getText()%></h3>
-                        </td>
-                    </tr>
-                </c:when>
-                <c:when test="${type=='PERSONAL'}">
+                <c:when test="${type == 'OBJECTIVE' || type == 'PERSONAL'}">
                     <tr>
                         <td colspan="2">
                             <%=((StringSection) section).getText()%>
@@ -61,20 +53,20 @@
                     </tr>
                 </c:when>
                 <c:when test="${type == 'EXPERIENCE' || type == 'EDUCATION'}">
-                    <c:forEach var="experienceCompany" items="<%=((CompanySection) section).getCompanies()%>">
+                    <c:forEach var="Company" items="<%=((CompanySection) section).getCompanies()%>">
                         <tr>
                             <td colspan="2">
-                                <h3>${experienceCompany.title}</h3>
-                                <c:if test="${not empty experienceCompany.website}">
-                                    <p><a href="${experienceCompany.website}" target="_blank">${experienceCompany.website}</a></p>
+                                <h3>${Company.title}</h3>
+                                <c:if test="${not empty Company.website}">
+                                    <p><a href="${Company.website}" target="_blank">${Company.website}</a></p>
                                 </c:if>
                             </td>
                         </tr>
-                        <c:forEach var="experiencePeriod" items="${experienceCompany.periods}">
-                            <jsp:useBean id="experiencePeriod" type="ru.basejava.webapp.model.Period"/>
+                        <c:forEach var="Period" items="${Company.periods}">
+                            <jsp:useBean id="Period" type="ru.basejava.webapp.model.Period"/>
                             <tr>
-                                <td width="15%" style="vertical-align: top"><%=HtmlUtil.formatDates(experiencePeriod)%></td>
-                                <td><b>${experiencePeriod.title}</b><br>${experiencePeriod.description}</td>
+                                <td width="15%" style="vertical-align: top"><%=HtmlUtil.formatDates(Period)%></td>
+                                <td><b>${Period.title}</b><br>${Period.description}</td>
                             </tr>
                         </c:forEach>
                     </c:forEach>

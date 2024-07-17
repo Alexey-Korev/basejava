@@ -11,7 +11,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class ResumeServlet extends HttpServlet {
@@ -36,14 +39,13 @@ public class ResumeServlet extends HttpServlet {
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
         Resume r;
-        if (uuid == null || uuid.isEmpty()) {
+        if (isExist(uuid)) {
             r = new Resume(fullName);
         } else {
             r = storage.get(uuid);
             r.setFullName(fullName);
         }
 
-        // Обработка контактов
         for (ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
             if (value != null && !value.trim().isEmpty()) {
@@ -53,55 +55,52 @@ public class ResumeServlet extends HttpServlet {
             }
         }
 
-        // Обработка секций
         for (SectionType type : SectionType.values()) {
             String value = request.getParameter(type.name());
-            if (value != null && !value.trim().isEmpty()) {
-                switch (type) {
-                    case PERSONAL, OBJECTIVE -> r.addSection(type, new StringSection(value));
-                    case ACHIEVEMENT, QUALIFICATIONS ->
-                            r.addSection(type, new ListSection(Arrays.asList(value.split("\n"))));
-
-                    /*case EXPERIENCE:
-                    case EDUCATION:
-                        String[] companyNames = request.getParameterValues(type.name() + "CompanyName");
-                        String[] companyWebsites = request.getParameterValues(type.name() + "CompanyWebsite");
-
-                        List<Company> companies = new ArrayList<>();
-                        if (companyNames != null) {
-                            for (int i = 0; i < companyNames.length; i++) {
-                                String companyName = companyNames[i];
-                                String companyWebsite = companyWebsites[i];
-
-                                // Период в компании
-                                String[] titles = request.getParameterValues(type.name() + i + "PeriodTitle");
-                                String[] descriptions = request.getParameterValues(type.name() + i + "PeriodDescription");
-                                String[] startDates = request.getParameterValues(type.name() + i + "PeriodStartDate");
-                                String[] endDates = request.getParameterValues(type.name() + i + "PeriodEndDate");
-
-                                List<Period> periods = new ArrayList<>();
-                                if (titles != null) {
-                                    for (int j = 0; j < titles.length; j++) {
-                                        String title = titles[j];
-                                        String description = descriptions[j];
-                                        LocalDate startDate = startDates != null ? LocalDate.parse(startDates[j]) : null;
-                                        LocalDate endDate = endDates != null ? LocalDate.parse(endDates[j]) : null;
-                                        periods.add(new Period(title, description, startDate, endDate));
-                                    }
-                                }
-                                companies.add(new Company(companyName, companyWebsite, periods.toArray(new Period[0])));
-                            }
-                        }
-                        if (!companies.isEmpty()) {
-                            r.addSection(type, new CompanySection(companies));
-                        }
-                        break;*/
+            switch (type) {
+                case PERSONAL, OBJECTIVE -> {
+                    if (value != null && !value.trim().isEmpty()) {
+                        r.addSection(type, new StringSection(value));
+                    } else {
+                        r.getSections().remove(type);
+                    }
                 }
-            } else if (value == null || value.trim().isEmpty()){
-                r.getSections().remove(type);
+                case ACHIEVEMENT, QUALIFICATIONS -> {
+                    if (value != null && !value.trim().isEmpty()) {
+                        List<String> items = Arrays.asList(value.split("\\n"));
+                        r.addSection(type, new ListSection(items));
+                    } else {
+                        r.getSections().remove(type);
+                    }
+                }
+                case EXPERIENCE, EDUCATION -> {
+                    List<Company> companies = new ArrayList<>();
+                    for (int i = 0; ; i++) {
+                        String companyName = request.getParameter(type.name() + "CompanyName" + i);
+                        if (companyName == null) break;
+                        String companyWebsite = request.getParameter(type.name() + "CompanyWebsite" + i);
+
+                        List<Period> periods = new ArrayList<>();
+                        for (int j = 0; ; j++) {
+                            String title = request.getParameter(type.name() + i + "PeriodTitle" + j);
+                            if (title == null) break;
+                            String description = request.getParameter(type.name() + i + "PeriodDescription" + j);
+                            LocalDate startDate = parseDate(request.getParameter(type.name() + i + "PeriodStartDate" + j));
+                            LocalDate endDate = parseDate(request.getParameter(type.name() + i + "PeriodEndDate" + j));
+                            periods.add(new Period(title, description, startDate, endDate));
+                        }
+                        companies.add(new Company(companyName, companyWebsite, periods.toArray(new Period[0])));
+                    }
+                    if (!companies.isEmpty()) {
+                        r.addSection(type, new CompanySection(companies));
+                    } else {
+                        r.getSections().remove(type);
+                    }
+                    break;
+                }
             }
         }
-        if (uuid == null || uuid.isEmpty()) {
+        if (isExist(uuid)) {
             storage.save(r);
         } else {
             storage.update(r);
@@ -143,7 +142,11 @@ public class ResumeServlet extends HttpServlet {
         ).forward(request, response);
     }
 
-    /*private Resume getResume(String uuid) {
-        return storage.get(uuid);
-    }*/
+    public boolean isExist(String uuid) {
+        return uuid == null || uuid.isEmpty();
+    }
+
+    private LocalDate parseDate(String dateStr) {
+        return dateStr != null ? LocalDate.parse(dateStr) : null;
+    }
 }

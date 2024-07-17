@@ -96,7 +96,6 @@ public class ResumeServlet extends HttpServlet {
                     } else {
                         r.getSections().remove(type);
                     }
-                    break;
                 }
             }
         }
